@@ -1,5 +1,4 @@
-module pcb_box(w, h, pcb_thickness, above, below, rail=3, wall=2, dent_size = 5;
-) {
+module pcb_box(w, h, pcb_thickness, above, below, rail=3, wall=2, dent_size = 5) {
     inside_h = above+below+pcb_thickness;
     difference () {
         // Outer wall
@@ -58,6 +57,8 @@ pcb = 1.6;
 pcb_real = 2.2;
 h = 71.5+margin;
 pcb_surface = 6;
+pull = 10;
+
 difference () {
     thick = 2+1.2;
 
@@ -78,12 +79,6 @@ difference () {
             }
         }
 
-/*    // SMA hole
-    hole_w = 9;
-    translate([2+12.5,h+2,2+pcb_surface-hole_w/2]) {
-        cube([hole_w,2,hole_w]);
-    }
-*/    
     // Holes for cable ties
     holes = [[29, 4], [19, 4]];
     for (hole = holes) {
@@ -93,19 +88,4 @@ difference () {
             }
         }
     }
-
-    
-    // Some tweak
-/*    translate([14,-10,0]) {
-        cube([20,10,1.2]);
-    }
-*/
 }
-
-// platter for connections
-pull = 10;
-difference () {
-
- }
-
-
