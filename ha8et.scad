@@ -16,8 +16,31 @@ module pcb_box(w, h, pcb_thickness, above, below, rail=3, wall=2) {
             cube([w,wall,inside_h]);
         }
     }
+}
 
-    
+module cable_tie_cup(spacing, width = 1, height = 4, depth = 0.5) {
+    $fn = 20;
+    translate([0,depth,0]) {
+        difference () {
+            difference () {
+                cylinder(height, spacing+width/2, spacing+width/2, center = true);
+                cylinder(height, spacing-width/2, spacing-width/2, center = true);
+            }
+            safe = spacing+width;
+            translate([-safe,-safe,-height]) {
+                cube([2*safe,safe,2*height]);
+            }
+        }
+
+        difference () {
+            translate([-spacing/2-width,-depth,-height/2]) {
+                cube([spacing+2*width,depth,height]);
+            }
+            translate([-spacing/2,-depth,-height]) {
+                cube([width,depth,2*height]);
+            }
+        }
+    }
 }
 
 margin = 0.4;
