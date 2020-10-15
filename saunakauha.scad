@@ -31,59 +31,81 @@ module asympt(start, end, a , b) {
 }
 */
 
+handle_separation = 4;
+margin = 0.4;
+
 module kauha() {
     z_adj = 1.18;
+
+    handle_r = 1.5;
+    handle_l = 33; // From the end of the pot
+    handle_l_tweak = 5+handle_separation;
 
     difference() {
         union () {
             // Outer
             dodecahedron(10, true);
 
-        // Handle
-        handle_r = 1.5;
-        handle_l = 33; // From the end of the pot
-        handle_l_tweak = 5;
-
-        difference () {
-            // Avoiding problems with euclidian coordinates by nesting
-            translate([0,-handle_l_tweak,z_adj-handle_r+0.164]) {
-                rotate([90,0,0]) {
-                    linear_extrude(handle_l) {
-                        rotate([-27,0,0]) {
-                            rotate([0,0,360/5/4]) {
-                                circle(handle_r, $fn = 5);
+            // Handle
+            difference () {
+                // Avoiding problems with euclidian coordinates by nesting
+                translate([0,-handle_l_tweak,z_adj-handle_r+0.164]) {
+                    rotate([90,0,0]) {
+                        linear_extrude(handle_l) {
+                            rotate([-27,0,0]) {
+                                rotate([0,0,360/5/4]) {
+                                    circle(handle_r, $fn = 5);
+                                }
                             }
                         }
                     }
                 }
-            }
-                
-            // Some rounding at the end
-            translate([0,-handle_l-handle_l_tweak+1.6,-0.164]) {
-                rotate([118,0,0]) {
-                    rotate([0,0,360/5/4]) {
-                        difference() {
-                            cylinder(2, 2*handle_r, 2*handle_r);
-                            cylinder(2,handle_r*1.05, 1, $fn=5);
+                    
+                // Some rounding at the end
+                translate([0,-handle_l-handle_l_tweak+1.6,-0.164]) {
+                    rotate([118,0,0]) {
+                        rotate([0,0,360/5/4]) {
+                            difference() {
+                                cylinder(2, 2*handle_r, 2*handle_r);
+                                cylinder(2,handle_r*1.05, 1, $fn=5);
+                            }
                         }
                     }
                 }
-            }
-            
-            // Hole at the end
-            translate([0,-handle_l-handle_l_tweak+3,0]) {
-                rotate([0,0,-18]) {
-                    cylinder(5, 0.7, 0.7, $fn=5, center=true);
+                
+                // Hole at the end
+                translate([0,-handle_l-handle_l_tweak+3,0]) {
+                    rotate([0,0,-18]) {
+                        cylinder(5, 0.7, 0.7, $fn=5, center=true);
+                    }
+                }
+                
+                // Skewed insertion
+                translate([-2,-handle_l_tweak,-handle_r*0.825]) {
+                    rotate([26.5,0,0]) {
+                        cube([4,4,4]);
+                    }
+                }
+                
+                // Insertion hole
+                translate([0, -handle_l_tweak-0.45,0]) {
+                    denting(0.5+margin/20,1+margin/10);
                 }
             }
         }
-    } 
-    translate([0,0,z_adj]) {
-        // Cut top part
-        cylinder(15,15,15);
-    }    
-    // Cut inner part
-    dodecahedron(8, true);
+        
+        translate([0,0,z_adj]) {
+            // Cut top part
+            cylinder(15,15,15);
+        }    
+        // Cut inner part
+        dodecahedron(8, true);
+    }
+
+
+    // Add plugs
+    translate([0,-5.45,0]) {
+        denting(0.5,1);
     }
 }
 
@@ -96,7 +118,6 @@ module denting(dent, dent_l) {
 module cutbox(start, end, safe = 150) {
     dent = 5;
     dent_l = 2*dent;
-    margin = 0.4;
     difference() {
         // Box
         translate([-safe/2,start,-safe/2]) {
@@ -115,11 +136,8 @@ module cutbox(start, end, safe = 150) {
     }
 }
 
-cutpoints = [-400,-220,-61.8,100];
-
-// Tests
-//cutbox(0,20,safe=20);
-//cutbox(40,60,safe=20);
+//cutpoints = [-400,-220,-61.8,100];
+cutpoints = [-440,-250,100];
 
 for (i = [0:len(cutpoints)-2]) {
     translate([0,20*i,0]) {
