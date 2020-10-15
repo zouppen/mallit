@@ -59,8 +59,10 @@ h = 71.5+margin;
 pcb_surface = 6;
 pull = 10;
 
+thick = 2+1.2; // Thickness of front panel
+holes = [[29, 4], [19, 4]];
+
 difference () {
-    thick = 2+1.2;
 
     union () {
         // PCB box
@@ -80,12 +82,51 @@ difference () {
         }
 
     // Holes for cable ties
-    holes = [[29, 4], [19, 4]];
     for (hole = holes) {
         translate([hole[0],-4,thick]) {
             rotate([-90,0,0]) {
                 cable_tie_cup(hole[1], 1.2, 4, 0);
             }
         }
+    }
+}
+
+// Calculated from magic values
+inner_height = pcb_real+ 11.5-pcb+margin+pcb_surface-pcb-thick+2;
+pcb_width = 34.5+margin;
+
+translate([50,0,0]) {
+    difference () {
+        union () {
+            // Outer box
+            translate([0,-pull+2,thick]) {
+                cube([pcb_width+2*2,pull-2,inner_height+2]);
+            }
+
+            // Indent
+            translate([0+2+margin/2,0,thick]) {
+                cube([pcb_width-margin,2,inner_height-margin/2]);
+            }
+        }
+        // Empty space
+        translate([0+2+2,-pull+2*2,thick]) {
+            cube([pcb_width-2*2,10,inner_height-2]);
+        }
+        // Cable inputs
+        for (hole = [20,28]) { // Old holes
+            translate([hole,-pull+2,thick+4/2]) {
+                cube([4,10,4], center=true);
+            }
+        }
+        
+        // Text
+        translate([(pcb_width+4)/2,-pull+2+1.2,13]) {
+            rotate([90,0,00]) {
+                linear_extrude(2) {
+                    text("OH64K | APRS", font="Liberation Sans Narrow:style:Bold", size=4.2, halign="center", valign="center");
+            }
+        }
+    }
+
     }
 }
