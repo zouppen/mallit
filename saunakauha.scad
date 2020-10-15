@@ -118,16 +118,10 @@ module cutbox(start, end, safe = 150) {
 cutpoints = [-400,-220,-61.8,100];
 
 // Tests
-cutbox(0,20,safe=20);
-cutbox(40,60,safe=20);
-
-            difference() {
-
+//cutbox(0,20,safe=20);
+//cutbox(40,60,safe=20);
 
 for (i = [0:len(cutpoints)-2]) {
-    echo(i);
-    echo(cutpoints[i]);
-    
     translate([0,20*i,0]) {
         intersection() {
             #cutbox(cutpoints[i], cutpoints[i+1]);
@@ -136,6 +130,4 @@ for (i = [0:len(cutpoints)-2]) {
             }
         }
     }
-}
-            cube([800,800,70], center=true);
 }
