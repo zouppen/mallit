@@ -44,7 +44,7 @@ module kauha() {
     difference() {
         union () {
             // Outer
-            dodecahedron(10, true);
+            dodecahedron(9.5, true);
 
             // Handle
             difference () {
@@ -100,11 +100,22 @@ module kauha() {
         }    
         // Cut inner part
         dodecahedron(8, true);
+        
+        // Add text
+        translate([0.05,9.7-handle_l-handle_l_tweak,-2]) {
+            mirror([1,0,0]) {
+                rotate([0,0,90]) {
+                    linear_extrude(1) {
+                        #text("HACKLAB   JYVÄSKYLÄ", font="Liberation Sans:style:Bold", size=1, halign="left", valign="center");
+                    }
+                }
+            }
+        }
     }
 
 
-    // Add plugs
-    translate([0,-5.45,0]) {
+    // Add plug
+    translate([0,-5.15,0]) {
         denting(0.5,1);
     }
 }
