@@ -14,10 +14,13 @@ raspi_hole_nut_dia = 10.5;
 camera_plat_y = 40;
 camera_plat_w = 12; 
 camera_space = 5.5;
+camera_angle = 20;
 wall = 3;
 
 // Calculated
 plateau_over = (raspi_h-bottom_end)/2;
+camera_y = camera_plat_y+plateau_thick;
+camera_z = -raspi_h+plateau_over;
 
 $fn = 20;
 sep = 0;
@@ -25,28 +28,12 @@ sep = 0;
 rotate([0,0,0]) {
     difference() {
         union() {
-            // Vertical back
-            //translate([left_end,0,-bottom_end]) mirror([1,0,0]) cube([9,bot_thickness,30]);
-            // Horizontal back
+            // Screw bar
             translate([left_end,sep,-bottom_end]) mirror([1,0,0]) cube([10,bot_thickness,9]);
             // Plateau
             translate([0,bot_thickness,plateau_over]) mirror([0,0,180]) cube([left_end,plateau_thick,raspi_h]);
-            //translate([0,bot_thickness,0]) mirror([0,0,180]) cube([left_end,plateau_thick,raspi_h-2*plateau_over]);
-            // Camera extension
-            translate([camera_space-wall,bot_thickness,-raspi_h+plateau_over]) {
-                y = camera_plat_y+plateau_thick;
-                intersection() {
-                    union() {
-                        rotate([0,-10,0]) cube([wall,y,camera_plat_w]);
-                        cube([wall,y,camera_plat_w*2]);
-                    }
-                    translate([-wall,0,0]) cube([2*wall,y,camera_plat_w]);
-                }
-            }
-            
-            // Add a support for the camera hand
-            translate([0,bot_thickness,-raspi_h+plateau_over]) cube([camera_space,plateau_thick,camera_plat_w]);
-
+            // Camera extension. Cut later
+            translate([0,bot_thickness,camera_z]) cube([camera_space,camera_y,camera_plat_w]);
         }
         // Hole for motor screw
         translate([left_end-5,-10,-bottom_end+5]) rotate([-90,0,0]) cylinder(100,3.5/2,3.5/2);
@@ -56,14 +43,13 @@ rotate([0,0,0]) {
         
         // Hole for motor axis
         size = 13;
-        translate([motor_pos_x,bot_thickness,-motor_pos_z]) rotate([-90,30,0]) cylinder(20, size, size, $fn =6);
+        translate([motor_pos_x,bot_thickness,-motor_pos_z]) rotate([-90,-90,0]) cylinder(20, size, size, $fn=5);
         
         // Holes for raspi
         for (x = [raspi_hole_pos+camera_space,raspi_w-raspi_hole_pos+camera_space]) {
             for (z = [plateau_over-raspi_hole_pos,-raspi_h+plateau_over+raspi_hole_pos]) {
                 translate([x,0,z]) rotate([-90,0,0]) {
                     #cylinder(plateau_thick+bot_thickness,raspi_hole_dia/2, raspi_hole_dia/2);
-                    //#cylinder(plateau_thick+bot_thickness-3,raspi_hole_nut_dia/2, raspi_hole_nut_dia/2);
                 }
             }
         }
@@ -75,6 +61,13 @@ rotate([0,0,0]) {
             // Add platform again
             translate([0,bot_thickness,plateau_over]) mirror([0,0,180]) cube([raspi_w+camera_space,plateau_thick,raspi_h]);
 
+        }
+        
+        // Camera hand angle
+        rotate([-90,0,0]) {
+            linear_extrude(camera_y+bot_thickness) {
+                polygon([[0,-camera_z],[0,-camera_plat_w-camera_z],[tan(camera_angle)*camera_plat_w,-camera_z]]);
+            }
         }
     }
 }
