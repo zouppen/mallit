@@ -1,5 +1,7 @@
 text_left = "HACKLAB ";
 text_right = " JYVÄSKYLÄ";
+outer_size = 9.5;
+inner_size = 8;
 
 module box(size) {
     cube([2*size, 2*size, size], center = true); 
@@ -29,7 +31,7 @@ handle_separation = 4;
 margin = 0.4;
 
 module kauha() {
-    z_adj = 1.18;
+    z_adj = 0.1181*outer_size;
 
     handle_r = 1.5;
     handle_l = 33; // From the end of the pot
@@ -38,7 +40,7 @@ module kauha() {
     difference() {
         union () {
             // Outer
-            dodecahedron(9.5, true);
+            dodecahedron(outer_size, true);
 
             // Handle
             difference () {
@@ -93,7 +95,7 @@ module kauha() {
             cylinder(15,15,15);
         }    
         // Cut inner part
-        dodecahedron(8, true);
+        dodecahedron(inner_size, true);
         
         // Add text
         translate([-0.55,17-handle_l-handle_l_tweak,-2]) {
@@ -109,9 +111,8 @@ module kauha() {
         }
     }
 
-
     // Add plug
-    translate([0,-5.15,0]) {
+    translate([0,-0.54*outer_size,0]) {
         denting(0.5,1);
     }
 }
