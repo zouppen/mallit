@@ -29,7 +29,7 @@ camera_z = -raspi_h+plateau_over;
 $fn = 20;
 sep = 0;
 
-rotate([0,/*9*/0,0]) {
+rotate([0,-90,0]) {
     screwbar_side = 9;
     difference() {
         union() {
