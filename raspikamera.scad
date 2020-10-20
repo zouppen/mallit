@@ -52,10 +52,10 @@ rotate([0,-90,0]) {
             }
             // Hand on the back
             wall = 5;
-            margin = 0.4;
+            tweak = -1.2;
             difference () {
                 translate([0,-wall,plateau_over]) mirror([0,0,1]) cube([camera_space,bot_thickness+wall,wall+plateau_over]);
-                translate([0,-margin,0]) mirror([0,0,1]) cube([camera_space,2*bot_thickness,2*wall]);
+                translate([0,0,tweak]) mirror([0,0,1]) cube([camera_space,2*bot_thickness,2*wall]);
             }
         }
         // Hole for motor screw
@@ -98,5 +98,17 @@ rotate([0,-90,0]) {
         // Cut bottom left corner
         rounding_left = 3.4;
         translate([left_end-50,0,-bottom_end-50+rounding_left]) rotate([0,45,0]) cube([100,100,100]);
+        
+        // Cable tie holder
+        tie_hole = 2;
+        tie_space = 9;
+        translate([0,bot_thickness+plateau_thick/2,-raspi_h+plateau_over+camera_plat_w+tie_space/2+tie_hole]) {
+            rotate([90,90,0]) {
+                difference() {
+                    cylinder(3,tie_space/2+tie_hole,tie_space/2+tie_hole, center=true);
+                    cylinder(3,tie_space/2,tie_space/2, center=true);
+                }
+            }
+        }
     }
 }
