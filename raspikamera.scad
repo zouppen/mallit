@@ -55,7 +55,7 @@ rotate([0,-90,0]) {
             margin = 0.4;
             difference () {
                 translate([0,-wall,plateau_over]) mirror([0,0,1]) cube([camera_space,bot_thickness+wall,wall+plateau_over]);
-                translate([0,-margin,margin]) mirror([0,0,1]) cube([camera_space,2*bot_thickness,2*wall]);
+                translate([0,-margin,0]) mirror([0,0,1]) cube([camera_space,2*bot_thickness,2*wall]);
             }
         }
         // Hole for motor screw
@@ -78,7 +78,7 @@ rotate([0,-90,0]) {
         }
         
         // Stylish cut on the left
-        rounding = 15.4;
+        rounding = 16;
         difference() {
             translate([left_end,0,0]) rotate([0,45,0]) cube([100,100,rounding], center=true);
             // Add platform again
@@ -96,7 +96,7 @@ rotate([0,-90,0]) {
         }
         
         // Cut bottom left corner
-        rounding_left = 3;
+        rounding_left = 3.4;
         translate([left_end-50,0,-bottom_end-50+rounding_left]) rotate([0,45,0]) cube([100,100,100]);
     }
 }
