@@ -1,3 +1,6 @@
+text_left = "HACKLAB ";
+text_right = " JYVÄSKYLÄ";
+
 module box(size) {
     cube([2*size, 2*size, size], center = true); 
 }
@@ -21,15 +24,6 @@ module dodecahedronish(size) {
         sphere(0.59*size, $fn = 50);
     }
 }
-
-/*
-module asympt(start, end, a , b) {
-    linear_extrude(20) {
-        points = [[end,0], [start,0], for (x = [start : 0.1 : end]) [ x, a/(x-b)]];
-        polygon(points);
-    }
-}
-*/
 
 handle_separation = 4;
 margin = 0.4;
@@ -102,11 +96,13 @@ module kauha() {
         dodecahedron(8, true);
         
         // Add text
-        translate([0.05,9.7-handle_l-handle_l_tweak,-2]) {
+        translate([-0.55,17-handle_l-handle_l_tweak,-2]) {
             mirror([1,0,0]) {
                 rotate([0,0,90]) {
                     linear_extrude(1) {
-                        #text("HACKLAB   JYVÄSKYLÄ", font="Liberation Sans:style:Bold", size=1, halign="left", valign="center");
+                        text(text_left, font="Liberation Sans:style:Bold", size=1, halign="right", valign="baseline");
+                        text(text_right, font="Liberation Sans:style:Bold", size=1, halign="left", valign="baseline");
+
                     }
                 }
             }
