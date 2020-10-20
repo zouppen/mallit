@@ -4,8 +4,8 @@ left_end = 42.5;
 bot_thickness = 17.5;
 screw_out = 22-6;
 plateau_thick = 9;
-motor_pos_z = 33;
-motor_pos_x = 22;
+motor_pos_z = 32.5;
+motor_pos_x = 21.5;
 motor_r = 11.6; // Not really this accurate, just to make it beautiful
 raspi_h = 65; // Raspi Zero W dimension
 raspi_w = 30;
@@ -18,6 +18,9 @@ camera_space = 5.5;
 camera_angle = 16;
 camera_tilted_y = 13;
 screw_insert_dia = 7.2;
+tie_hole_h = 2;
+tie_hole_w = 4;
+tie_space = 9;
 
 // Printing aid
 pentagon_rotate = 0;
@@ -27,7 +30,7 @@ plateau_over = (raspi_h-bottom_end)/2-1;
 camera_y = camera_plat_y+plateau_thick;
 camera_z = -raspi_h+plateau_over;
 
-$fn = 20;
+//$fn = 20;
 sep = 0;
 
 rotate([0,-90,0]) {
@@ -75,10 +78,9 @@ rotate([0,-90,0]) {
 
         // Screw insert
         translate([left_end-5,screw_out,-bottom_end+5]) rotate([-90,0,0]) cylinder(bot_thickness,screw_insert_dia/2,screw_insert_dia/2, $fn=6);
-         %translate([left_end-5,screw_out,-bottom_end+5]) rotate([-90,0,0]) cylinder(bot_thickness,6.4/2,6.4/2);
        
         // Hole for motor axis
-        translate([motor_pos_x,bot_thickness,-motor_pos_z]) rotate([-90,pentagon_rotate,0]) #cylinder(plateau_thick+5, motor_r, motor_r, $fn=5);
+        translate([motor_pos_x,bot_thickness,-motor_pos_z]) rotate([-90,pentagon_rotate,0]) #cylinder(plateau_thick-2, motor_r, motor_r, $fn=5);
         
         // Holes for raspi
         for (x = [raspi_hole_pos+camera_space,raspi_w-raspi_hole_pos+camera_space]) {
@@ -90,7 +92,7 @@ rotate([0,-90,0]) {
         }
         
         // Stylish cut on the left
-        rounding = 16;
+        rounding = 16.5;
         difference() {
             translate([left_end,0,0]) rotate([0,45,0]) cube([100,100,rounding], center=true);
             // Add platform again
@@ -112,13 +114,11 @@ rotate([0,-90,0]) {
         translate([left_end-50,0,-bottom_end-50+rounding_left]) rotate([0,45,0]) cube([100,100,100]);
         
         // Cable tie holder
-        tie_hole = 2;
-        tie_space = 9;
-        translate([0,bot_thickness+plateau_thick/2,-raspi_h+plateau_over+camera_plat_w+tie_space/2+tie_hole]) {
+        translate([left_end,bot_thickness+plateau_thick/2,-raspi_h+plateau_over+17+tie_space/2+tie_hole_h]) {
             rotate([90,90,0]) {
                 difference() {
-                    cylinder(3,tie_space/2+tie_hole,tie_space/2+tie_hole, center=true);
-                    cylinder(3,tie_space/2,tie_space/2, center=true);
+                    cylinder(tie_hole_w,tie_space/2+tie_hole_h,tie_space/2+tie_hole_h, center=true);
+                    cylinder(tie_hole_w,tie_space/2,tie_space/2, center=true);
                 }
             }
         }
