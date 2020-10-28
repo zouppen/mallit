@@ -1,7 +1,7 @@
 bottom_hole_dist = 120;
 bottom_rise = 10;
 width = 205;
-height = 115;
+height = 111;
 rounding_w = 200;
 rounding_h = 110;
 rounding_r = 10;
@@ -29,6 +29,8 @@ rpi_h = 56.1;
 rpi_hole_pos = 3.5;
 rpi_hole_dist = 56.8;
 whole_plate();
+
+ethernet_hole_d = 35;
 
 module whole_plate() {
     difference() {
@@ -59,7 +61,7 @@ module whole_plate() {
                 }
                 
                 // PicoUPS
-                translate([-30,5,0]) {
+                translate([-30,7,0]) {
                     rotate([0,0,90]) {
 
                         difference() {
@@ -72,7 +74,7 @@ module whole_plate() {
                                 }
                             }
                             // Screw helper
-                            translate([-1,0,ups_h]) rotate([0,90,0]) cylinder(13,20,20,$fn=6);
+                            translate([-1,0,ups_h-5]) rotate([0,90,0]) cylinder(13,20,20,$fn=6);
                         }
                     }
                 }
@@ -90,7 +92,7 @@ module whole_plate() {
                                 }
                             }
                             // Screw helper
-                            translate([-1,-10,rpi_h-10]) rotate([0,90,0]) cylinder(13,25,25,$fn=6);
+                            translate([-1,-10,rpi_h-5]) rotate([0,90,0]) cylinder(13,25,25,$fn=6);
                         }
                     }
                 }
@@ -108,6 +110,8 @@ module whole_plate() {
                 }
             }
         }
+        // Hole for Ethernet jack
+        #translate([0,-height/2+ethernet_hole_d*0.21,0]) rotate([0,0,90]) cylinder(max_depth,ethernet_hole_d/2, ethernet_hole_d/2, $fn=6);
     }
 }
 
@@ -122,17 +126,18 @@ module wall(width, height, rotation, leg=10) {
     trig_y = cos(rotation)*height-sin(rotation)*wall;
 
     hull() {
-    for (my = [[0,0,0],[0,1,0]]) {
-        mirror(my) {
-            translate([0,width/2,0]) {
-                rotate([90,0,0]) {
-                    linear_extrude(1) {
-                        polygon([[0, 0], [leg+wall/2,0], [trig_x,trig_y]]);
+        for (my = [[0,0,0],[0,1,0]]) {
+            mirror(my) {
+                translate([0,width/2,0]) {
+                    rotate([90,0,0]) {
+                        linear_extrude(1) {
+                            polygon([[0, 0], [leg+wall/2,0], [trig_x,trig_y]]);
+                        }
                     }
                 }
             }
         }
-    }}
+    }
 }
 
 module rounding() {
