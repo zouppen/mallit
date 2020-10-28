@@ -6,7 +6,7 @@ rounding_w = 200;
 rounding_h = 110;
 rounding_r = 10;
 max_depth = 80;
-plateau_depth = 3;
+plateau_depth = 4;
 wall = 3;
 hole_d = 3.5;
 hole_indent_depth = 0;
@@ -17,6 +17,7 @@ support_dist = 93; // x distance between supports
 small_hole_depth=10;
 small_hole_d = 2.3;
 
+dc_converter_angle = 40;
 dc_converter_side = 75;
 dc_converter_hole_dist = 63;
 
@@ -50,9 +51,8 @@ module whole_plate() {
                 // DC Converter
                 translate([50,-6,0]) {
                     difference() {
-                        angle=40;
-                        wall(dc_converter_side,dc_converter_side,angle,30);
-                        rotate([0,angle-90,0]) {
+                        wall(dc_converter_side,dc_converter_side,dc_converter_angle,30);
+                        rotate([0,dc_converter_angle-90,0]) {
                             first = (dc_converter_side-dc_converter_hole_dist)/2;
                             hole(first,0);
                             hole(first+dc_converter_hole_dist,0);
