@@ -8,7 +8,7 @@ rounding_r = 10;
 max_depth = 80;
 plateau_depth = 3;
 wall = 3;
-hole_d = 3;
+hole_d = 3.5;
 hole_indent_depth = 0;
 hole_indent_d = 7;
 support_side = 20;
@@ -111,7 +111,30 @@ module whole_plate() {
             }
         }
         // Hole for Ethernet jack
-        #translate([0,-height/2+ethernet_hole_d*0.21,0]) rotate([0,0,90]) cylinder(max_depth,ethernet_hole_d/2, ethernet_hole_d/2, $fn=6);
+        translate([0,-height/2+ethernet_hole_d*0.21,0]) rotate([0,0,90]) cylinder(max_depth,ethernet_hole_d/2, ethernet_hole_d/2, $fn=6);
+        
+        // Cable tie holes for future proofing
+        difference() {
+            union() {
+                for (x = [-85:15:35]) {
+                    for (y = [-40:10:40]) {
+                        cabletie(x,y);
+                    }
+                }
+            }
+            // Some safe areas: Ethernet hole
+            translate([-ethernet_hole_d/2,-height/2,0]) cube([ethernet_hole_d,ethernet_hole_d*0.8,max_depth]);
+            
+            // Not puncturing support
+            translate([-support_dist/2-support_side,-height/2,0]) cube([support_side, support_side,max_depth]);
+            
+            // Risers not punctured
+            translate([-width/2,5,0]) cube([width/2,height/2,max_depth]);
+
+            // Attachment hole
+            translate([-bottom_hole_dist/2-5,-5,0]) cube([20,10,max_depth]);
+            
+        }
     }
 }
 
@@ -174,5 +197,11 @@ module hole(x, y) {
         mirror([0,0,1]) {
             cylinder(small_hole_depth+1, small_hole_d/2, small_hole_d/2);
         }
+    }
+}
+
+module cabletie(x, y) {
+    translate([x,y,0]) {
+        cube([5,2.5,30], center=true);
     }
 }
