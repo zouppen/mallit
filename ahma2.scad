@@ -14,11 +14,20 @@ hole_indent_d = 7;
 support_side = 20;
 support_dist = 93; // x distance between supports
 
-hole_depth=10;
+small_hole_depth=10;
+small_hole_d = 2.3;
+
 dc_converter_side = 75;
 dc_converter_hole_dist = 63;
-dc_converter_hole_d = 2.3;
 
+ups_w = 57.8;
+ups_h = 36.8;
+ups_hole_pos = 4;
+
+rpi_w = 85;
+rpi_h = 56.1;
+rpi_hole_pos = 3.5;
+rpi_hole_dist = 56.8;
 whole_plate();
 
 module whole_plate() {
@@ -36,18 +45,57 @@ module whole_plate() {
                 }
             }
             translate([0,0,plateau_depth+bottom_rise]) {
-    //wall(30,40,0);
-    translate([50,-6,0]) {
-        difference() {
-            angle=40;
-            wall(dc_converter_side,dc_converter_side,angle,30);
-            rotate([0,angle+90,0]) {
-                translate([-dc_converter_side/2,0,0]) #dc_converter_holes();
-            }
-        }
-    }
-}
+                // DC Converter
+                translate([50,-6,0]) {
+                    difference() {
+                        angle=40;
+                        wall(dc_converter_side,dc_converter_side,angle,30);
+                        rotate([0,angle-90,0]) {
+                            first = (dc_converter_side-dc_converter_hole_dist)/2;
+                            hole(first,0);
+                            hole(first+dc_converter_hole_dist,0);
+                        }
+                    }
+                }
+                
+                // PicoUPS
+                translate([-30,5,0]) {
+                    rotate([0,0,90]) {
 
+                        difference() {
+                            wall(ups_w,ups_h,0,10);
+                            rotate([0,-90,0]) {
+                                for (y = [-ups_w/2+ups_hole_pos,ups_w/2-ups_hole_pos]) {
+                                    for (x = [ups_hole_pos,ups_h-ups_hole_pos]) {
+                                        hole(x,y);
+                                    }
+                                }
+                            }
+                            // Screw helper
+                            translate([-1,0,ups_h]) rotate([0,90,0]) cylinder(13,20,20,$fn=6);
+                        }
+                    }
+                }
+                
+                // Raspberry Pi
+                translate([-43,dc_converter_side/2-6,0]) {
+                    rotate([0,0,-90]) {
+                        difference() {
+                            wall(rpi_w,rpi_h,0,10);
+                            rotate([0,-90,0]) {
+                                for (y = [-rpi_w/2+rpi_hole_pos,-rpi_w/2+rpi_hole_pos+rpi_hole_dist]) {
+                                    for (x = [rpi_hole_pos,rpi_h-rpi_hole_pos]) {
+                                        hole(x,y);
+                                    }
+                                }
+                            }
+                            // Screw helper
+                            translate([-1,-10,rpi_h-10]) rotate([0,90,0]) cylinder(13,25,25,$fn=6);
+                        }
+                    }
+                }
+
+            }
         }
         // Substractive
         for (mx = [[0,0,0], [1,0,0]]) {
@@ -116,10 +164,10 @@ module support() {
     }
 }
 
-module dc_converter_holes() {
-    for (x = [0, dc_converter_hole_dist]) {
-        translate([x-dc_converter_hole_dist/2,0,-1]) {
-            cylinder(hole_depth+1, dc_converter_hole_d/2, dc_converter_hole_d/2);
+module hole(x, y) {
+    translate([x,y,1]) {
+        mirror([0,0,1]) {
+            cylinder(small_hole_depth+1, small_hole_d/2, small_hole_d/2);
         }
     }
 }
