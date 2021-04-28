@@ -1,15 +1,15 @@
-nail_len = 7;
-nail_h = 1.5;
+nail_len = 7.4;
+nail_h = 2.1;
 nail_w = 1;
-nail_split = 0.5; // how long is the sloped part of the whole nail
+nail_split = 0.6; // how long is the sloped part of the whole nail
 
 // Ring outer diameter and width
-ring_d = 25;
-ring_w = 5;
-ring_h = 2;
+ring_d = 31.3;
+ring_w = 5.8;
+ring_h = 3;
 // Inner wall
 inner_w = 1;
-inner_h = 6;
+inner_h = 7.2;
 
 $fn = 128;
 
