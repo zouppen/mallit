@@ -1,19 +1,20 @@
 
-// Symbols on sides. Length must be equal to sides
+// Symbols on sides. Length determines the geometry,
+// e.g. 6 elements generate a hexagon.
 sym = ["1","2","3","4","5","X"];
 
 // All dimensions in mm
-sides = 6;            // Hexagon
 letter_z = 14.5;      // Letter base position from the tip
 text_size = 10;       // Text size
-font = "Ubuntu Mono"; // Font
-tip_angle=45;         // Tip angle
+font = "Chilanka"; // Font
+tip_angle=43;         // Tip angle
 height = 44;          // Height of the whole object
 handle_height = 16.5; // Handle height (topmost part)
 handle_r = 2.7;       // Handle radius
 pirra_r = 11.6;       // Number part radius
 text_indent=0.4;      // How deep are the letter indentations
 
+sides = len(sym);
 epsilon = 0.1; // To avoid overlapping triangles in rendering
 
 intersection() {
