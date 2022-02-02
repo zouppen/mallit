@@ -10,7 +10,7 @@ brush_top = 12.1;
 // Distance between the top and the toothbrush platform
 brush_height = 28;
 // Extra thickness to add to the bottom
-base_thickness = 6;
+base_thickness = 5;
 // Screw hole indentation
 screw_indent = 1;
 // Screw head radius
@@ -66,7 +66,7 @@ module opening () {
 // Just the dodecahedron at correct height
 module dode_only() {
     translate([0,0,brush_height/2-base_thickness]) {
-        rotate([0,180,0]) {
+        rotate([0,0,0]) {
             dodecahedron(brush_height+base_thickness);
         }
     }
@@ -85,8 +85,11 @@ module screwhole() {
 // lower. In case you want to use it as such without a screw
 module bottom_weight() {
     difference () {
-        rotate([0,0,54]) mirror([0,0,1])cylinder(9, 7, 13, $fn=5);
+        real_height = (brush_height+base_thickness);
+        translate([0,0,brush_height/2-base_thickness]) rotate([0,0,-126]) cylinder(real_height, real_height*0.38197,0, center=true, $fn = 5);
         screwhole();
+        // Cut the top of the cone
+        cylinder(real_height, real_height, real_height, $fn=4);
     }
 }
 
