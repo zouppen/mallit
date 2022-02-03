@@ -1,3 +1,5 @@
+/* "Shade" for two IR cameras pointed at each other to block glaring */
+
 // Screw hole indentation
 screw_indent = 1;
 // Screw head radius
