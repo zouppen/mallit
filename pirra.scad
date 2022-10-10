@@ -1,19 +1,37 @@
+/* Pirra, a traditional log drivers' amusement object
+ * from Finland. All dimensions are in millimetres.
+ *
+ * Dimensions are similar to the original historical object
+ * but this object is not historically accurate.
+ *
+ * Made by Joel Lehtonen.
+ */
 
-// Symbols on sides. Length determines the geometry,
-// e.g. 6 elements generate a hexagon.
+/* [Geometry] */
+// Symbols on sides. Length determines the geometry, e.g. 6 elements generate a hexagon.
 sym = ["1","2","3","4","5","X"];
+// Tip angle
+tip_angle=43;         
+// Height of the whole object
+height = 44;
+// Handle height (topmost part)
+handle_height = 16.5;
+// Handle radius
+handle_r = 2.7;
+// Number part radius
+pirra_r = 11.6;
 
-// All dimensions in mm
-letter_z = 14.5;      // Letter base position from the tip
-text_size = 10;       // Text size
-font = "Chilanka"; // Font
-tip_angle=43;         // Tip angle
-height = 44;          // Height of the whole object
-handle_height = 16.5; // Handle height (topmost part)
-handle_r = 2.7;       // Handle radius
-pirra_r = 11.6;       // Number part radius
-text_indent=0.4;      // How deep are the letter indentations
+/* [Text rendering] */
+// Font
+font = "Chilanka";
+// Font size
+text_size = 10;
+// How deep are the letter indentations
+text_indent=0.4;
+// Letter base position from the tip
+letter_z = 14.5;
 
+/* [Hidden] */
 sides = len(sym);
 epsilon = 0.1; // To avoid overlapping triangles in rendering
 
