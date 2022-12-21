@@ -9,7 +9,7 @@ ura_d = 1.96;
 tappi_h = 27.24;
 tappi_w = 15.75;
 tappi_inner_d_top = 1.7;
-tappi_inner_d_bot = 3.16;
+tappi_inner_d_bot = 1.7; //3.16;
 tappi_roundness = 1;
 tappi_outer_d = 2;
 tappi_l = 40.86;
@@ -39,6 +39,13 @@ module ranni() {
     scale(1/(4-0.25)) translate([-0.25,-0.25,0]) polygon(inverse(0.25,6,0.05));
 }
 
+module leikkuuboksi() {
+    intersection() {
+        children();
+        translate([0,0,50]) rotate([-90,0,0]) hulluus(tappi_w, tappi_inner_d_bot+ura_d+tappi_outer_d+tappi_l,100);
+    }
+}
+
 // Slanted part
 difference() {
     hulluus(tappi_w, tappi_h, tappi_inner_d_bot);
@@ -49,7 +56,7 @@ difference() {
 translate([0,tappi_inner_d_bot,0]) hulluus(ura_w, tappi_h-ura_h, ura_d);
 
 // Back part
-translate([0,tappi_inner_d_bot+ura_d,0]) {
+leikkuuboksi() translate([0,tappi_inner_d_bot+ura_d,0]) {
     intersection() {
         translate([0,0,-pohja_h]) hulluus(tappi_w, tappi_h+pohja_h, tappi_l+tappi_outer_d);
         // Rounding
@@ -61,7 +68,7 @@ translate([0,tappi_inner_d_bot+ura_d,0]) {
 }
 
 // Bottom ja holetsu
-translate([0,0,-pohja_h]) difference() {
+leikkuuboksi() translate([0,0,-pohja_h]) difference() {
     translate([-tappi_w/2,0,0]) union() {
         cube([tappi_w,tappi_inner_d_bot+ura_d+tappi_outer_d+tappi_l,pohja_h-pohja_adj]);
         // Hotfix to fill a hole
@@ -69,3 +76,4 @@ translate([0,0,-pohja_h]) difference() {
     }        
     translate([0,jarru_y,0]) cylinder(jarru_depth, jarru_dia/2, jarru_dia/2, $fn=64);
 }
+
