@@ -1,3 +1,8 @@
+// Acer Acros 486 / Pentium desktop computer vertical orientation supports.
+//
+// The original are good but don't last 30 years of hard computing.
+// Author: Joel Lehtonen
+
 ura_h = 3.3;
 ura_w = 11.85;
 ura_d = 1.96;
@@ -8,8 +13,8 @@ tappi_inner_d_bot = 3.16;
 tappi_roundness = 1;
 tappi_outer_d = 2;
 pohja_h = 4;
-jarru_dia = 10;
-jarru_depth = 2;
+jarru_dia = 12.8;
+jarru_depth = 2.2;
 jarru_y = 8;
 
 module hulluus(w, h, d, scale=1) {
