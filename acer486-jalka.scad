@@ -17,7 +17,7 @@ pohja_h = 4;
 pohja_adj = 0.60;
 jarru_dia = 12.8;
 jarru_depth = 2.2;
-jarru_y = 8;
+jarru_y = 23;
 
 module hulluus(w, h, d, scale=1) {
     mirror([0,1,0]) rotate([90,0,0]) linear_extrude(d, scale=scale) hull() {
