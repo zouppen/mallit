@@ -1,7 +1,12 @@
-text_left = "HACKLAB ";
-text_right = " JYVÄSKYLÄ";
-outer_size = 9.5;
-inner_size = 8.5;
+text_left = "Hacklab ";
+text_right = " Jyväskylä ry";
+outer_size = 95;
+inner_size = 85;
+
+dent_mm = 8;
+dent_l_mm = 15;
+dent_first_mul = 1.4;
+
 
 module box(size) {
     cube([2*size, 2*size, size], center = true); 
@@ -27,15 +32,20 @@ module dodecahedronish(size) {
     }
 }
 
-handle_separation = 4;
+handle_separation = 40;
 margin = 0.4;
+
+module varsi_cyl(l, r1, r2) {
+    scale([1,1,cos(27)]) rotate([90,-90,0]) cylinder(l, r1, r2, $fn = 5);
+}
 
 module kauha() {
     z_adj = 0.1181*outer_size;
 
-    handle_r = 1.5;
-    handle_l = 33; // From the end of the pot
-    handle_l_tweak = 5+handle_separation;
+    handle_r = 15;
+    handle_l = 330; // From the end of the pot
+    handle_round = 7;
+    handle_l_tweak = 50+handle_separation;
 
     difference() {
         union () {
@@ -44,88 +54,68 @@ module kauha() {
 
             // Handle
             difference () {
-                // Avoiding problems with Euler coordinates by nesting
-                translate([0,-handle_l_tweak,z_adj-handle_r+0.164]) {
-                    rotate([90,0,0]) {
-                        linear_extrude(handle_l) {
-                            rotate([-27,0,0]) {
-                                rotate([0,0,360/5/4]) {
-                                    circle(handle_r, $fn = 5);
-                                }
-                            }
-                        }
-                    }
+                // Handle full part
+                translate([0,-handle_l_tweak,z_adj-handle_r+1.64]) {
+                    varsi_cyl(handle_l-handle_round, handle_r, handle_r);
+                    translate([0,-handle_l+handle_round,0]) varsi_cyl(handle_round, handle_r, handle_r-handle_round);
                 }
                     
-                // Some rounding at the end
-                translate([0,-handle_l-handle_l_tweak+1.6,z_adj-1.39]) {
-                    rotate([118,0,0]) {
-                        rotate([0,0,360/5/4]) {
-                            difference() {
-                                cylinder(2, 2*handle_r, 2*handle_r);
-                                #cylinder(2,handle_r*1.05, 1, $fn=5);
-                            }
-                        }
-                    }
-                }
-                
                 // Hole at the end
-                translate([0,-handle_l-handle_l_tweak+2.5,0]) {
+                translate([0,-handle_l-handle_l_tweak+25,0]) {
                     rotate([0,0,-18]) {
-                        cylinder(5, 0.7, 0.7, $fn=5, center=true);
+                        cylinder(50, 7, 7, $fn=5, center=true);
                     }
                 }
                 
                 // Skewed insertion
-                translate([-2,-handle_l_tweak,z_adj-handle_r*1.61]) {
+                translate([-20,-handle_l_tweak,z_adj-handle_r*1.61]) {
                     rotate([26.5,0,0]) {
-                        cube([4,4,4]);
+                        cube([40,40,40]);
                     }
                 }
                 
                 // Insertion hole
-                translate([0, -handle_l_tweak-0.45,0]) {
-                    denting(0.5+margin/20,1+margin/10);
+                translate([0, -handle_l_tweak-1,0]) {
+                    denting(dent_mm+margin/2,dent_first_mul*dent_l_mm+margin);
                 }
+            }
+            // Add plug
+            translate([0,-0.5*outer_size,0]) {
+                denting(dent_mm,dent_first_mul* dent_l_mm);
             }
         }
         
         translate([0,0,z_adj]) {
             // Cut top part
-            cylinder(15,15,15);
+            cylinder(150,150,150);
         }    
         // Cut inner part
         dodecahedron(inner_size, true);
         
         // Add text
-        translate([-0.55,17-handle_l-handle_l_tweak,-2]) {
+        text_depth=0.6;
+        translate([-5,170-handle_l-handle_l_tweak,-20]) {
             mirror([1,0,0]) {
                 rotate([0,0,90]) {
-                    linear_extrude(1) {
-                        text(text_left, font="Liberation Sans:style:Bold", size=1, halign="right", valign="baseline");
-                        text(text_right, font="Liberation Sans:style:Bold", size=1, halign="left", valign="baseline");
+                    linear_extrude(7.04+text_depth) {
+                        text(text_left, font="Ubuntu:style:Bold", size=10, halign="right", valign="baseline");
+                        text(text_right, font="Ubuntu:style:Bold", size=10, halign="left", valign="baseline");
 
                     }
                 }
             }
         }
     }
-
-    // Add plug
-    translate([0,-0.54*outer_size,0]) {
-        denting(0.5,1);
-    }
 }
 
 module denting(dent, dent_l) {
-    translate([-dent/2,-dent_l,-dent/2]) {
-        cube([dent,dent_l,dent]);
+    // Hotfix by squeezing it a little on z axis
+    translate([0,-dent_l,-2.4]) scale([1,1,0.9]) {
+        rotate([-90,-90,0]) cylinder(dent_l, dent, dent, $fn=5);
     }
 }
 
 module cutbox(start, end, safe = 150) {
-    dent = 5;
-    dent_l = 2*dent;
     difference() {
         // Box
         translate([-safe/2,start,-safe/2]) {
@@ -134,13 +124,13 @@ module cutbox(start, end, safe = 150) {
         
         // Indent
         translate([0,end,0]) {
-            denting(dent+margin/2, dent_l+margin); // TODO varalta isompi
+            denting(dent_mm+margin/2, dent_l_mm+1);
         }
     }
     
     // Outdent
     translate([0,start,0]) {
-        denting(dent, dent_l);
+        denting(dent_mm, dent_l_mm);
     }
 }
 
@@ -151,9 +141,7 @@ for (i = [0:len(cutpoints)-2]) {
     translate([0,20*i,0]) {
         intersection() {
             cutbox(cutpoints[i], cutpoints[i+1]);
-            scale(10) {
-                kauha();
-            }
+            kauha();
         }
     }
 }
