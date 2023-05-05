@@ -7,14 +7,13 @@ dent_mm = 8;
 dent_l_mm = 15;
 dent_first_mul = 1.4;
 
-
 module box(size) {
     cube([2*size, 2*size, size], center = true); 
 }
 
 module dodecahedron(size, ish=false) {
       dihedral = 116.565;
-      intersection(){
+      intersection() {
             box(size);
             intersection_for(i=[1:5])  {
                 union() {
@@ -23,13 +22,6 @@ module dodecahedron(size, ish=false) {
                 }
            }
       }
-}
-
-module dodecahedronish(size) {
-    intersection() {
-        dodecahedron(size);
-        sphere(0.59*size, $fn = 50);
-    }
 }
 
 handle_separation = 40;
@@ -105,6 +97,12 @@ module kauha() {
                 }
             }
         }
+
+        // Logo
+        logo_size = 0.5;
+        tweak = 0.1;
+        translate([0,0,-outer_size*0.5-tweak]) scale([logo_size, logo_size,1]) mirror([1,0,0]) linear_extrude(0.6+tweak) import("saunakauha-logo.svg");
+
     }
 }
 
@@ -134,7 +132,6 @@ module cutbox(start, end, safe = 150) {
     }
 }
 
-//cutpoints = [-400,-220,-61.8,100];
 cutpoints = [-440,-250,100];
 
 for (i = [0:len(cutpoints)-2]) {
@@ -145,3 +142,13 @@ for (i = [0:len(cutpoints)-2]) {
         }
     }
 }
+
+// Hack to get stronger tap if desired
+module just_tap() {
+    // Add plug // -0.5*outer_size+40
+    difference() {
+        denting(dent_mm,0.5*outer_size+ dent_first_mul* dent_l_mm-20); // So ugly
+        translate([0,20,0]) dodecahedron(inner_size, true); // Cut inner parts
+    }
+}
+//!just_tap();
