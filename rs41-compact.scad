@@ -28,7 +28,7 @@ module pcb_positive() {
         // Antenna wire hole
         translate(ant_adj) translate([pcb[0]/2,0,-pcb[2]/2]) attach(BACK) {
             cylinder(h=ant_h, d=ant_inner_d, $fn=8);
-            tag("") cylinder(h=ant_h-wall, d=ant_d, anchor=BOTTOM) attach(TOP) top_half() sphere(d=ant_d); // Antenna outer part
+            tag("ant") cylinder(h=ant_h-wall, d=ant_d, anchor=BOTTOM) attach(TOP) top_half() sphere(d=ant_d); // Antenna outer part
         }
         // Support rails
         tag("keep") for (a = [LEFT, RIGHT]) {
@@ -49,19 +49,6 @@ module pcb_positive() {
         }
     }
 }
-/*
-!holetsu();
-
-module holetsu() tag("keepo") diff() {
-    cube([2*screw_hole_dist,2*screw_hole_dist,headroom_bot])
-    tag("remove") attach(TOP) cylinder(headroom_bot, d=screw_hole_d, orient=BOTTOM);
-}
-*/
-//!tag("keep") diff() {
-//   !tag("keep") 
-//!diff() cube([2*screw_hole_dist,2*screw_hole_dist,headroom_bot])
-//    tag("remove") translate([0,0,0]) cylinder(headroom_bot, d=screw_hole_d, align=TOP);
-
 
 diff("remove","keep keep2") {
     // The outer case
