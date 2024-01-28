@@ -40,7 +40,7 @@ module pcb_positive() {
         align(TOP) cube([pcb[0], pcb[1], headroom_top]);
 
         // Indent of the cover
-        for (a = [LEFT, RIGHT]) translate([0,-0.5*cover_indent,cover_pos-1.5*cover_indent]) align(FRONT+a) rotate([270,0,0]) wedge([indent_width,cover_indent,cover_indent], spin=[0,180,0]);
+        up(cover_pos-1) for (a = [LEFT, RIGHT]) align(FRONT+TOP+a) wedge([indent_width,cover_indent,cover_indent], spin=[180,0,0]);
 
         // Screw hole
         align(BOTTOM+BACK) tag("keep2") diff() {
