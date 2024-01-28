@@ -1,7 +1,7 @@
 include <BOSL2/std.scad>
 
-pcb = [37.2, 120.2, 1.2];
-conn = [12.4, 8.4, 7.2]; // Including pcb thickness
+pcb = [37.4, 120.4, 1.2];
+conn = [12.4, 10, 7.2]; // Including pcb thickness
 conn_adj = [0, 5.65, pcb[2]];
 ant_h = 136;
 ant_d = 8;
