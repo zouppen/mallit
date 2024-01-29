@@ -6,30 +6,32 @@ conn_adj = [0, 5.65, pcb[2]];
 ant_h = 136;
 ant_d = 8;
 ant_inner_d = 1.8;
-ant_adj = [-3,0,-0.5];
+ant_adj = [-3,0,-1.1];
 tolerance = 0.2;
 support_rail = [4, 50];
 support_rail_start_y = 32;
 support_rail_b = [4, 25];
 headroom_bot = 5;
 headroom_top = 5;
-cover_pos = 4;
+cover_pos = 5.2;
 cover_indent = 1.5;
 indent_width = 10;
 screw_hole_dist = 4.5;
 screw_hole_d = 1.5;
 wall = 2;
 raise = [1,1]; // Width, height
+cover_tolerance = 0.2;
 much = 200;
 $fn = 100;
 
+// Antenna and PCB room without cover
 module pcb_positive() {
     // The base of the PCB
-    tag("remove") cube(pcb) {
+    left(pcb[0]/2) cube(pcb) {
         // Peripheral connector
         translate(conn_adj) align(LEFT+BACK+BOTTOM) cube(conn);
         // Antenna wire hole
-        translate(ant_adj) translate([pcb[0]/2,0,-pcb[2]/2]) attach(BACK) {
+        translate(ant_adj) right(pcb[0]/2) attach(BACK) {
             cylinder(h=ant_h, d=ant_inner_d, $fn=8);
             tag("ant") cylinder(h=ant_h-wall, d=ant_d, anchor=BOTTOM, $fn=6) attach(TOP) top_half() sphere(d=ant_d, $fn=6); // Antenna outer part
         }
@@ -49,16 +51,21 @@ module pcb_positive() {
         up(cover_pos-1) for (a = [LEFT, RIGHT]) align(FRONT+TOP+a) cube([indent_width,cover_indent,cover_indent], spin=[180,0,0]);
 
         // Screw hole
-        align(BOTTOM+BACK) tag("keep2") diff() {
+        align(BOTTOM+BACK) tag("keep") tag_scope() diff() {
             cube([2*screw_hole_dist,2*screw_hole_dist,headroom_bot])
             tag("remove") attach(TOP) cylinder(headroom_bot, d=screw_hole_d, orient=BOTTOM);
         }
     }
 }
 
-module bottom_part() diff("remove","keep keep2") {
+module bottom_part() diff() {
     // The outer case
-    translate([-wall-raise[0],-wall-cover_indent,pcb[2]+cover_pos]) cuboid([pcb[0]+2*wall+2*raise[0],wall+pcb[1]+conn_adj[1]+cover_indent,headroom_bot+pcb[2]+wall+cover_pos], anchor=TOP+LEFT+FRONT, rounding=wall, edges=["Z",BOT]) {
+    front_wall = wall + cover_indent;
+    back_wall = conn_adj[1];
+    side_wall = wall + raise[0];
+    // Casing
+    move([0, -front_wall, headroom_top]) cuboid([pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_bot+cover_pos], rounding=wall, edges=["Z",BOT], anchor=FRONT+TOP) {
+        // Make cuts for rails
         tag("remove") down(raise[1]) {
             for (a = [LEFT, RIGHT]) {
                 align(TOP+a) cube([wall, much, raise[1]]);
@@ -67,10 +74,9 @@ module bottom_part() diff("remove","keep keep2") {
         }
         // PUPU logo
         tag("remove") position(BOTTOM) linear_extrude(0.4) import_2d("/home/joell/vektori/pupu-logo.svg", [150.290,111.372], size=28, center=true);
-
     }
-    // The inner structure + antenna
-    pcb_positive();
+    // Carve interior + antenna
+    tag("remove") pcb_positive();
 }
 
 bottom_part();
