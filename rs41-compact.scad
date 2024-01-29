@@ -12,7 +12,7 @@ support_rail = [4, 50];
 support_rail_start_y = 32;
 support_rail_b = [4, 25];
 headroom_bot = 5;
-headroom_top = 5;
+headroom_top = 18; // Not including the PCB!
 cover_pos = 5.2;
 cover_indent = 1.5;
 indent_width = 10;
@@ -53,8 +53,12 @@ module pcb_positive() {
         // PCB "top clearout area
         align(TOP) cube([pcb[0], pcb[1], headroom_top]);
 
-        // Indent of the cover
-        up(cover_pos-cover_indent_z) for (a = [LEFT, RIGHT]) align(FRONT+BOTTOM+a) cube([indent_width,cover_indent,cover_indent], spin=[-90,0,0]);
+        // Indent of the cover (lower piece)
+        tag("rm-lower") up(cover_pos-cover_indent_z) for (a = [LEFT, RIGHT]) align(FRONT+BOTTOM+a) cube([indent_width,cover_indent,cover_indent], spin=[-90,0,0]);
+
+        indent_width_b = indent_width-2*cover_tolerance;
+
+        tag("upper") back(cover_tolerance) up(cover_pos-cover_indent_z) for (a = [[LEFT,-1], [RIGHT,+1]]) left(cover_tolerance*a[1]) align(FRONT+BOTTOM+a[0], BOTTOM) wedge([indent_width_b,cover_indent,cover_indent], spin=[90,0,0]) align(BOTTOM+BACK) cube([indent_width_b,cover_indent+cover_indent_z+cover_tolerance+headroom_top-cover_pos+raise[1],wall]) align(FRONT+TOP) cube([indent_width_b, headroom_top-cover_pos+raise[1],cover_tolerance]);
 
         // Screw hole
         align(BOTTOM+BACK) tag("keep") tag_scope() diff() {
@@ -64,7 +68,7 @@ module pcb_positive() {
     }
 }
 
-module bottom_part() diff() {
+module bottom_part() diff("remove rm-lower", "keep") {
     // Casing
     move([0, -front_wall, cover_pos]) cuboid([pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_bot+cover_pos], rounding=wall, edges=["Z",BOT], anchor=FRONT+TOP) {
         // Make cuts for rails
@@ -81,7 +85,7 @@ module bottom_part() diff() {
     tag("remove") pcb_positive();
 }
 
-module top_part() tag_scope() up(0) diff() {
+module top_part() tag_scope() up(10) diff("remove","upper") hide("rm-lower ant") {
     // Include "rims"
     rim_w = pcb[0] + 2*raise[0] + 2*cover_tolerance;
     rim_h = front_wall + pcb[1] + back_wall - wall + cover_tolerance;
@@ -92,8 +96,11 @@ module top_part() tag_scope() up(0) diff() {
         // Remove inside rim
         tag("remove") align(FRONT+BOTTOM, inside=true) cube([rim_w, rim_h, raise[1] + cover_tolerance]);
     }
+    // Carve interior + antenna
+    tag("remove") pcb_positive();
 }
 
+//render()
 bottom_part();
 top_part();
 
