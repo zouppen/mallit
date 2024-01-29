@@ -20,7 +20,8 @@ screw_hole_dist = 4.5;
 screw_hole_d = 1.5;
 wall = 2;
 raise = [1,1]; // Width, height
-cover_tolerance = 0.2;
+cover_indent_z = 1; // Height of the holes in the front part
+cover_tolerance = 0.2; // Tolerance in the rails
 much = 200;
 $fn = 100;
 
@@ -48,7 +49,7 @@ module pcb_positive() {
         align(TOP) cube([pcb[0], pcb[1], headroom_top]);
 
         // Indent of the cover
-        up(cover_pos-1) for (a = [LEFT, RIGHT]) align(FRONT+TOP+a) cube([indent_width,cover_indent,cover_indent], spin=[180,0,0]);
+        up(cover_pos-cover_indent_z) for (a = [LEFT, RIGHT]) align(FRONT+BOTTOM+a) cube([indent_width,cover_indent,cover_indent], spin=[-90,0,0]);
 
         // Screw hole
         align(BOTTOM+BACK) tag("keep") tag_scope() diff() {
@@ -64,7 +65,7 @@ module bottom_part() diff() {
     back_wall = conn_adj[1];
     side_wall = wall + raise[0];
     // Casing
-    move([0, -front_wall, headroom_top]) cuboid([pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_bot+cover_pos], rounding=wall, edges=["Z",BOT], anchor=FRONT+TOP) {
+    move([0, -front_wall, cover_pos]) cuboid([pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_bot+cover_pos], rounding=wall, edges=["Z",BOT], anchor=FRONT+TOP) {
         // Make cuts for rails
         tag("remove") down(raise[1]) {
             for (a = [LEFT, RIGHT]) {
