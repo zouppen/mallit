@@ -64,14 +64,22 @@ module bottom_part() diff("remove","keep keep2") {
                 align(TOP+a) cube([wall, much, raise[1]]);
             }
             align(TOP+BACK) cube([much,wall, raise[1]]);
-        }        
+        }
+        // PUPU logo
+        tag("remove") position(BOTTOM) linear_extrude(0.4) import_2d("/home/joell/vektori/pupu-logo.svg", [150.290,111.372], size=28, center=true);
+
     }
     // The inner structure + antenna
     pcb_positive();
 }
 
-difference() {
-    bottom_part();
-    // PUPU logo has to be done using non-BOSL2-way
-    translate([pcb[0]/2,pcb[1]/2+5,-headroom_bot-wall]) linear_extrude(0.4) scale(0.15) translate([-90,-70,0]) import("/home/joell/vektori/pupu-logo.svg");
+bottom_part();
+
+module import_2d(file_name, file_geom, size=1, center, anchor, spin) {
+    anchor = get_anchor(anchor, center, [-1,-1], [-1,-1]);
+    ratio = size/file_geom[0];
+    attachable(anchor, spin, two_d=true, size=ratio*file_geom) {
+        scale(ratio) move(-file_geom/2) import(file_name);
+        children();
+    }
 }
