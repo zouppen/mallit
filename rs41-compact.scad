@@ -25,6 +25,11 @@ cover_tolerance = 0.2; // Tolerance in the rails
 much = 200;
 $fn = 100;
 
+// Derived constants
+front_wall = wall + cover_indent;
+back_wall = conn_adj[1];
+side_wall = wall + raise[0];
+
 // Antenna and PCB room without cover
 module pcb_positive() {
     // The base of the PCB
@@ -60,10 +65,6 @@ module pcb_positive() {
 }
 
 module bottom_part() diff() {
-    // The outer case
-    front_wall = wall + cover_indent;
-    back_wall = conn_adj[1];
-    side_wall = wall + raise[0];
     // Casing
     move([0, -front_wall, cover_pos]) cuboid([pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_bot+cover_pos], rounding=wall, edges=["Z",BOT], anchor=FRONT+TOP) {
         // Make cuts for rails
@@ -80,7 +81,21 @@ module bottom_part() diff() {
     tag("remove") pcb_positive();
 }
 
+module top_part() tag_scope() up(0) diff() {
+    // Include "rims"
+    rim_w = pcb[0] + 2*raise[0] + 2*cover_tolerance;
+    rim_h = front_wall + pcb[1] + back_wall - wall + cover_tolerance;
+
+    move([0, -front_wall, headroom_top+wall]) cuboid([pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_top-cover_pos+raise[1]], rounding=wall, edges=["Z",TOP], anchor=FRONT+TOP) {
+        // Remove bottom margin
+        tag("remove") align(BOTTOM, inside=true) cube([much,much,cover_tolerance]);
+        // Remove inside rim
+        tag("remove") align(FRONT+BOTTOM, inside=true) cube([rim_w, rim_h, raise[1] + cover_tolerance]);
+    }
+}
+
 bottom_part();
+top_part();
 
 module import_2d(file_name, file_geom, size=1, center, anchor, spin) {
     anchor = get_anchor(anchor, center, [-1,-1], [-1,-1]);
