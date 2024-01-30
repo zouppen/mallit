@@ -59,7 +59,7 @@ module pcb_positive() {
         align(TOP) down(headroom_bot+pcb[2]) cube([pcb[0], pcb[1], headroom_bot + headroom_top]) {
             // Top pillar for the wedge
             tag("keep-upper") align(TOP+FRONT, inside=true) {
-                // The wedge part
+                // The front wedge thingy
                 cube([pcb[0], cover_tolerance+wall, headroom_top-cover_pos-cover_tolerance]) {
                     wedge_thingy("rm-lower");
                 }
@@ -70,6 +70,14 @@ module pcb_positive() {
         align(BOTTOM+BACK) tag("keep-lower") tag_scope() diff() {
             cube([2*screw_hole_dist,2*screw_hole_dist,headroom_bot])
             tag("remove") attach(TOP) cylinder(headroom_bot, d=screw_hole_d, orient=BOTTOM);
+        }
+
+        // Back part wedge thingy
+        tag("keep-lower") up(cover_pos) align(BACK+BOTTOM) {
+            cube([pcb[0],wall+cover_tolerance,1]) {
+                rotate([180,0,0]) wedge_thingy("rm-upper");
+                align(BOTTOM, inside=true) wedge([pcb[0], wall+cover_tolerance, wall], spin=[180,0,0]);
+            }
         }
     }
 }
