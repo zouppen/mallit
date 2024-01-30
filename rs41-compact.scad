@@ -56,15 +56,16 @@ module pcb_positive() {
             tag("upper") align(TOP+FRONT, inside=true) {
                 cube([pcb[0], cover_tolerance+wall, headroom_top-cover_pos-cover_tolerance])
                     for (a=[LEFT, RIGHT]) {
+                        // Opening for the wedge
+                        tag("rm-lower") align(BOTTOM+BACK+a) move([0, -wall, -cover_tolerance-cover_indent_z]) cube([indent_width, cover_indent+cover_tolerance, cover_indent]);
+
+                        // Wedge (positive part)
                         wedge_w = indent_width-2*cover_tolerance;
                         align(BOTTOM+BACK+a) move(-cover_tolerance*a) cube([wedge_w,wall,cover_tolerance+cover_indent_z+cover_indent])
                             align(FRONT+BOTTOM, inside=false) wedge([wedge_w,cover_indent,cover_indent], spin=[180,0,0]);
                     }
             }
         }
-
-        // Indent of the cover (lower piece)
-        tag("rm-lower") up(cover_pos-cover_indent_z) for (a = [LEFT, RIGHT]) align(FRONT+BOTTOM+a) cube([indent_width,cover_indent,cover_indent], spin=[-90,0,0]);
 
         // Screw hole
         align(BOTTOM+BACK) tag("keep") tag_scope() diff() {
