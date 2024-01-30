@@ -98,6 +98,18 @@ module headroom(center, anchor, spin=0, orient=UP) {
     }
 }
 
+// Top part of the case, outer geometry
+module top_outer(center, anchor, spin=0, orient=UP) {
+    anchor = get_anchor(anchor, center, -[1,1,1], -[1,1,1]);
+    size = [pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_top_front-cover_pos+raise[1]];
+    gap = headroom_top_front-headroom_top_back;
+    attachable(anchor,spin,orient, size=size) {
+        down(gap/2) cuboid(size-[0,0,gap], rounding=wall, edges=["Z",TOP])
+            align(BOTTOM+FRONT, inside=true) cuboid(size-[0,headroom_split_y+back_wall-wall,0], rounding=wall, edges=["Z",TOP]);
+        children();
+    }
+}
+
 module wedge_thingy(remove_tag) {
     for (a=[LEFT, RIGHT]) {
         // Opening for the wedge
@@ -132,7 +144,7 @@ module top_part() tag_scope() diff("rm rm-upper","keep keep-upper") hide("rm-low
     rim_w = pcb[0] + 2*raise[0] + 2*cover_tolerance;
     rim_h = front_wall + pcb[1] + back_wall - wall + cover_tolerance;
 
-    move([0, -front_wall, headroom_top_front+wall]) cuboid([pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_top_front-cover_pos+raise[1]], rounding=wall, edges=["Z",TOP], anchor=FRONT+TOP) {
+    move([0, -front_wall, headroom_top_front+wall]) top_outer(anchor=FRONT+TOP) {
         // Remove bottom margin
         tag("rm") align(BOTTOM, inside=true) cube([much,much,cover_tolerance]);
         // Remove inside rim
