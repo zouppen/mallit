@@ -51,14 +51,20 @@ module pcb_positive() {
         // PCB bottom clearout area
         align(BOTTOM) cube([pcb[0], pcb[1], headroom_bot]);
         // PCB top clearout area
-        align(TOP) cube([pcb[0], pcb[1], headroom_top - pcb[2]]);
+        align(TOP) cube([pcb[0], pcb[1], headroom_top - pcb[2]]) {
+            // Place the wedge here
+            tag("upper") align(TOP+FRONT, inside=true) {
+                cube([pcb[0], cover_tolerance+wall, headroom_top-cover_pos-cover_tolerance])
+                    for (a=[LEFT, RIGHT]) {
+                        wedge_w = indent_width-2*cover_tolerance;
+                        align(BOTTOM+BACK+a) move(-cover_tolerance*a) cube([wedge_w,wall,cover_tolerance+cover_indent_z+cover_indent])
+                            align(FRONT+BOTTOM, inside=false) wedge([wedge_w,cover_indent,cover_indent], spin=[180,0,0]);
+                    }
+            }
+        }
 
         // Indent of the cover (lower piece)
         tag("rm-lower") up(cover_pos-cover_indent_z) for (a = [LEFT, RIGHT]) align(FRONT+BOTTOM+a) cube([indent_width,cover_indent,cover_indent], spin=[-90,0,0]);
-
-        indent_width_b = indent_width-2*cover_tolerance;
-
-        tag("upper") back(cover_tolerance) up(cover_pos-cover_indent_z) for (a = [[LEFT,-1], [RIGHT,+1]]) left(cover_tolerance*a[1]) align(FRONT+BOTTOM+a[0], BOTTOM) wedge([indent_width_b,cover_indent,cover_indent], spin=[90,0,0]) align(BOTTOM+BACK) cube([indent_width_b,cover_indent+cover_indent_z+cover_tolerance+headroom_top-cover_pos+raise[1],wall]) align(FRONT+TOP) cube([indent_width_b, headroom_top-cover_pos+raise[1],cover_tolerance]);
 
         // Screw hole
         align(BOTTOM+BACK) tag("keep") tag_scope() diff() {
