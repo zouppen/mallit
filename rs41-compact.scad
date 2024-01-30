@@ -25,6 +25,7 @@ wall = 2;
 raise = [1,1]; // Width, height
 cover_indent_z = 1; // Height of the holes in the front part
 cover_tolerance = 0.2; // Tolerance in the rails. One layer height is a good guess
+antenna_eccentricity_z = -1.2;
 much = 200;
 displace = "z";
 $fn = 100;
@@ -47,8 +48,8 @@ module pcb_positive() {
         move(conn_adj) align(LEFT+BACK+BOTTOM) cube(conn);
         // Antenna wire hole
         move(ant_adj) right(pcb[0]/2) attach(BACK) {
-            cylinder(h=ant_h, d=ant_inner_d, $fn=8);
-            tag("lower") cylinder(h=ant_h-wall, d=ant_d, anchor=BOTTOM, $fn=6) attach(TOP) top_half() sphere(d=ant_d, $fn=6); // Antenna outer part
+            cylinder(h=ant_h, d=ant_inner_d, $fn=6, spin=360/12);
+            tag("lower") back(antenna_eccentricity_z) cylinder(h=ant_h-wall, d=ant_d, anchor=BOTTOM, $fn=8, spin=360/16) attach(TOP) top_half() scale(1.085)sphere(d=ant_d, $fn=8); // Antenna outer part
         }
         // Support rails
         tag("keep-lower") for (a = [LEFT, RIGHT]) {
