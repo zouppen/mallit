@@ -14,9 +14,9 @@ support_rail_start_y = 32;
 support_rail_b = [4, 27];
 headroom_bot = 5;
 headroom_top_front = 18; // Not including the PCB!
-headroom_top_back = 8.1; // Not including the PCB!
+headroom_top_back = 6; // Not including the PCB!
 headroom_split_y = 23;
-cover_pos = 5.2;
+cover_pos = 3;
 cover_indent = 1.5;
 indent_width = 10;
 screw_hole_dist = 4.5;
@@ -66,6 +66,9 @@ module pcb_positive() {
                     wedge_thingy("rm-lower");
                 }
             }
+
+            // Slight cut for the back
+            align(TOP+BACK, inside=true) tag("rm-upper") down(headroom_top_front-headroom_top_back) cube([pcb[0],4,wall+cover_tolerance], spin=[90,0,0]);
         }
 
         // Screw hole
@@ -75,10 +78,9 @@ module pcb_positive() {
         }
 
         // Back part wedge thingy
-        tag("keep-lower") up(cover_pos) align(BACK+BOTTOM) {
-            cube([pcb[0],wall+cover_tolerance,1]) {
+        tag("keep-lower") move([0,wall+cover_tolerance,cover_pos]) align(BACK+BOTTOM) {
+            cube([pcb[0],wall+cover_tolerance]) {
                 rotate([180,0,0]) wedge_thingy("rm-upper");
-                align(BOTTOM, inside=true) wedge([pcb[0], wall+cover_tolerance, wall], spin=[180,0,0]);
             }
         }
     }
