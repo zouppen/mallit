@@ -61,7 +61,7 @@ module pcb_positive() {
             tag("keep-upper") align(TOP+FRONT, inside=true) {
                 // The wedge part
                 cube([pcb[0], cover_tolerance+wall, headroom_top-cover_pos-cover_tolerance]) {
-                    wedge_thingy();
+                    wedge_thingy("rm-lower");
                 }
             }
         }
@@ -74,10 +74,10 @@ module pcb_positive() {
     }
 }
 
-module wedge_thingy() {
+module wedge_thingy(remove_tag) {
     for (a=[LEFT, RIGHT]) {
         // Opening for the wedge
-        tag("rm-lower") align(BOTTOM+BACK+a) move([0, -wall, -cover_tolerance-cover_indent_z]) cube([indent_width, cover_indent+cover_tolerance, cover_indent]);
+        tag(remove_tag) align(BOTTOM+BACK+a) move([0, -wall, -cover_tolerance-cover_indent_z]) cube([indent_width, cover_indent+cover_tolerance, cover_indent]);
 
         // Wedge (positive part)
         wedge_w = indent_width-2*cover_tolerance;
