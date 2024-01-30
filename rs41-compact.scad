@@ -11,9 +11,11 @@ ant_adj = [-3,0,-1.1];
 tolerance = 0.2;
 support_rail = [4, 50];
 support_rail_start_y = 32;
-support_rail_b = [4, 25];
+support_rail_b = [4, 27];
 headroom_bot = 5;
-headroom_top = 18; // Not including the PCB!
+headroom_top_front = 18; // Not including the PCB!
+headroom_top_back = 8.1; // Not including the PCB!
+headroom_split_y = 23;
 cover_pos = 5.2;
 cover_indent = 1.5;
 indent_width = 10;
@@ -56,11 +58,11 @@ module pcb_positive() {
 
         }
         // PCB clearout area (top+bottom)
-        align(TOP) down(headroom_bot+pcb[2]) cube([pcb[0], pcb[1], headroom_bot + headroom_top]) {
+        align(TOP) down(headroom_bot+pcb[2]) headroom() {
             // Top pillar for the wedge
             tag("keep-upper") align(TOP+FRONT, inside=true) {
                 // The front wedge thingy
-                cube([pcb[0], cover_tolerance+wall, headroom_top-cover_pos-cover_tolerance]) {
+                cube([pcb[0], cover_tolerance+wall, headroom_top_front-cover_pos-cover_tolerance]) {
                     wedge_thingy("rm-lower");
                 }
             }
@@ -79,6 +81,18 @@ module pcb_positive() {
                 align(BOTTOM, inside=true) wedge([pcb[0], wall+cover_tolerance, wall], spin=[180,0,0]);
             }
         }
+    }
+}
+
+module headroom(center, anchor, spin=0, orient=UP) {
+
+    anchor = get_anchor(anchor, center, -[1,1,1], -[1,1,1]);
+    size = [pcb[0], pcb[1], headroom_bot + headroom_top_front];
+    attachable(anchor,spin,orient, size=size) {
+        tag_scope() diff() {
+            cube(size, center=true) align(TOP+BACK, inside=true) tag("remove") cube([pcb[0], headroom_split_y, headroom_top_front - headroom_top_back]);
+        }
+        children();
     }
 }
 
@@ -116,7 +130,7 @@ module top_part() tag_scope() diff("rm rm-upper","keep keep-upper") hide("rm-low
     rim_w = pcb[0] + 2*raise[0] + 2*cover_tolerance;
     rim_h = front_wall + pcb[1] + back_wall - wall + cover_tolerance;
 
-    move([0, -front_wall, headroom_top+wall]) cuboid([pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_top-cover_pos+raise[1]], rounding=wall, edges=["Z",TOP], anchor=FRONT+TOP) {
+    move([0, -front_wall, headroom_top_front+wall]) cuboid([pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_top_front-cover_pos+raise[1]], rounding=wall, edges=["Z",TOP], anchor=FRONT+TOP) {
         // Remove bottom margin
         tag("rm") align(BOTTOM, inside=true) cube([much,much,cover_tolerance]);
         // Remove inside rim
