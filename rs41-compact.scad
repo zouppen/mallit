@@ -48,8 +48,9 @@ module pcb_positive() {
         move(conn_adj) align(LEFT+BACK+BOTTOM) cube(conn);
         // Antenna wire hole
         move(ant_adj) right(pcb[0]/2) attach(BACK) {
-            cylinder(h=ant_h, d=ant_inner_d, $fn=6, spin=360/12);
-            tag("lower") back(antenna_eccentricity_z) cylinder(h=ant_h-wall, d=ant_d, anchor=BOTTOM, $fn=8, spin=360/16) attach(TOP) top_half() scale(1.085)sphere(d=ant_d, $fn=8); // Antenna outer part
+            cylinder(h=wall, d1=ant_inner_d*3, d2=ant_inner_d, $fn=5, spin=180/5-90)
+            align(BOTTOM, inside=true) cylinder(h=ant_h, d=ant_inner_d, $fn=5);
+            tag("lower") back(antenna_eccentricity_z) cylinder(h=ant_h-wall, d=ant_d, anchor=BOTTOM, $fn=8, spin=180/8) attach(TOP) top_half() scale(1.085)sphere(d=ant_d, $fn=8); // Antenna outer part
         }
         // Support rails
         tag("keep-lower") for (a = [LEFT, RIGHT]) {
