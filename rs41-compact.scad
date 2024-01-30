@@ -1,4 +1,5 @@
 include <BOSL2/std.scad>
+include <BOSL2/structs.scad>
 
 pcb = [37.4, 120.4, 1.2];
 conn = [12.4, 10, 7.2]; // Including pcb thickness
@@ -21,9 +22,15 @@ screw_hole_d = 1.5;
 wall = 2;
 raise = [1,1]; // Width, height
 cover_indent_z = 1; // Height of the holes in the front part
-cover_tolerance = 0.2; // Tolerance in the rails
+cover_tolerance = 0.2; // Tolerance in the rails. One layer height is a good guess
 much = 200;
+displace = "z";
 $fn = 100;
+
+// Lookup table for variable displace for handy ways to move covers for printing and side views
+displacements = struct_set([], ["x", [ -50,    0,   0],
+                                "y", [   0, -150,   0],
+                                "z", [   0,    0,  20]]);
 
 // Derived constants
 front_wall = wall + cover_indent;
@@ -35,81 +42,77 @@ module pcb_positive() {
     // The base of the PCB
     left(pcb[0]/2) cube(pcb) {
         // Peripheral connector
-        translate(conn_adj) align(LEFT+BACK+BOTTOM) cube(conn);
+        move(conn_adj) align(LEFT+BACK+BOTTOM) cube(conn);
         // Antenna wire hole
-        translate(ant_adj) right(pcb[0]/2) attach(BACK) {
+        move(ant_adj) right(pcb[0]/2) attach(BACK) {
             cylinder(h=ant_h, d=ant_inner_d, $fn=8);
-            tag("ant") cylinder(h=ant_h-wall, d=ant_d, anchor=BOTTOM, $fn=6) attach(TOP) top_half() sphere(d=ant_d, $fn=6); // Antenna outer part
+            tag("lower") cylinder(h=ant_h-wall, d=ant_d, anchor=BOTTOM, $fn=6) attach(TOP) top_half() sphere(d=ant_d, $fn=6); // Antenna outer part
         }
         // Support rails
-        tag("keep") for (a = [LEFT, RIGHT]) {
+        tag("keep-lower") for (a = [LEFT, RIGHT]) {
             align(a+BOTTOM+BACK) fwd(support_rail_start_y) cube([support_rail[0], support_rail[1], headroom_bot]);
             
             align(a+BOTTOM+FRONT) cube([support_rail_b[0], support_rail_b[1], headroom_bot]);
 
         }
-        // PCB bottom clearout area
-        align(BOTTOM) cube([pcb[0], pcb[1], headroom_bot]);
-        // PCB top clearout area
-        align(TOP) cube([pcb[0], pcb[1], headroom_top - pcb[2]]) {
+        // PCB clearout area (top+bottom)
+        align(TOP) down(headroom_bot+pcb[2]) cube([pcb[0], pcb[1], headroom_bot + headroom_top]) {
             // Place the wedge here
-            tag("upper") align(TOP+FRONT, inside=true) {
-                cube([pcb[0], cover_tolerance+wall, headroom_top-cover_pos-cover_tolerance])
+            tag("keep-upper") align(TOP+FRONT, inside=true) {
+                // The wedge part
+                cube([pcb[0], cover_tolerance+wall, headroom_top-cover_pos-cover_tolerance]) {
                     for (a=[LEFT, RIGHT]) {
                         // Opening for the wedge
                         tag("rm-lower") align(BOTTOM+BACK+a) move([0, -wall, -cover_tolerance-cover_indent_z]) cube([indent_width, cover_indent+cover_tolerance, cover_indent]);
 
                         // Wedge (positive part)
                         wedge_w = indent_width-2*cover_tolerance;
-                        align(BOTTOM+BACK+a) move(-cover_tolerance*a) cube([wedge_w,wall,cover_tolerance+cover_indent_z+cover_indent])
-                            align(FRONT+BOTTOM, inside=false) wedge([wedge_w,cover_indent,cover_indent], spin=[180,0,0]);
+                        align(BOTTOM+BACK+a) move(-cover_tolerance*a) cube([wedge_w,wall, cover_tolerance+cover_indent_z+cover_indent])
+                            align(FRONT+BOTTOM) wedge([wedge_w,cover_indent,cover_indent], spin=[180,0,0]);
                     }
+                }
             }
         }
 
         // Screw hole
-        align(BOTTOM+BACK) tag("keep") tag_scope() diff() {
+        align(BOTTOM+BACK) tag("keep-lower") tag_scope() diff() {
             cube([2*screw_hole_dist,2*screw_hole_dist,headroom_bot])
             tag("remove") attach(TOP) cylinder(headroom_bot, d=screw_hole_d, orient=BOTTOM);
         }
     }
 }
 
-module bottom_part() diff("remove rm-lower", "keep") hide("upper") {
+module bottom_part() tag_scope() diff("rm rm-lower", "keep keep-lower") hide("rm-upper keep-upper upper") {
     // Casing
     move([0, -front_wall, cover_pos]) cuboid([pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_bot+cover_pos], rounding=wall, edges=["Z",BOT], anchor=FRONT+TOP) {
         // Make cuts for rails
-        tag("remove") down(raise[1]) {
+        tag("rm") down(raise[1]) {
             for (a = [LEFT, RIGHT]) {
                 align(TOP+a) cube([wall, much, raise[1]]);
             }
             align(TOP+BACK) cube([much,wall, raise[1]]);
         }
         // PUPU logo
-        tag("remove") position(BOTTOM) linear_extrude(0.4) import_2d("/home/joell/vektori/pupu-logo.svg", [150.290,111.372], size=28, center=true);
+        tag("rm") position(BOTTOM) linear_extrude(0.4) import_2d("/home/joell/vektori/pupu-logo.svg", [150.290,111.372], size=28, center=true);
     }
     // Carve interior + antenna
-    tag("remove") pcb_positive();
+    tag("rm") pcb_positive();
 }
 
-module top_part() tag_scope() up(10) diff("remove","upper") hide("rm-lower ant") {
+module top_part() tag_scope() diff("rm rm-upper","keep keep-upper") hide("rm-lower keep-lower lower") {
     // Include "rims"
     rim_w = pcb[0] + 2*raise[0] + 2*cover_tolerance;
     rim_h = front_wall + pcb[1] + back_wall - wall + cover_tolerance;
 
     move([0, -front_wall, headroom_top+wall]) cuboid([pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_top-cover_pos+raise[1]], rounding=wall, edges=["Z",TOP], anchor=FRONT+TOP) {
         // Remove bottom margin
-        tag("remove") align(BOTTOM, inside=true) cube([much,much,cover_tolerance]);
+        tag("rm") align(BOTTOM, inside=true) cube([much,much,cover_tolerance]);
         // Remove inside rim
-        tag("remove") align(FRONT+BOTTOM, inside=true) cube([rim_w, rim_h, raise[1] + cover_tolerance]);
+        tag("rm") align(FRONT+BOTTOM, inside=true) cube([rim_w, rim_h, raise[1] + cover_tolerance]);
     }
     // Carve interior + antenna
-    tag("remove") pcb_positive();
+    tag("rm") pcb_positive();
 }
-
-//render()
-bottom_part();
-top_part();
 
 module import_2d(file_name, file_geom, size=1, center, anchor, spin) {
     anchor = get_anchor(anchor, center, [-1,-1], [-1,-1]);
@@ -119,3 +122,6 @@ module import_2d(file_name, file_geom, size=1, center, anchor, spin) {
         children();
     }
 }
+
+bottom_part();
+move(struct_val(displacements, displace, [0,0,0])) top_part();
