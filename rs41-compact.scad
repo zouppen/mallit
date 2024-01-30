@@ -48,10 +48,10 @@ module pcb_positive() {
             align(a+BOTTOM+FRONT) cube([support_rail_b[0], support_rail_b[1], headroom_bot]);
 
         }
-        // PCB "component area"
+        // PCB bottom clearout area
         align(BOTTOM) cube([pcb[0], pcb[1], headroom_bot]);
-        // PCB "top clearout area
-        align(TOP) cube([pcb[0], pcb[1], headroom_top]);
+        // PCB top clearout area
+        align(TOP) cube([pcb[0], pcb[1], headroom_top - pcb[2]]);
 
         // Indent of the cover (lower piece)
         tag("rm-lower") up(cover_pos-cover_indent_z) for (a = [LEFT, RIGHT]) align(FRONT+BOTTOM+a) cube([indent_width,cover_indent,cover_indent], spin=[-90,0,0]);
