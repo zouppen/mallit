@@ -74,7 +74,7 @@ module pcb_positive() {
     }
 }
 
-module bottom_part() diff("remove rm-lower", "keep") {
+module bottom_part() diff("remove rm-lower", "keep") hide("upper") {
     // Casing
     move([0, -front_wall, cover_pos]) cuboid([pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_bot+cover_pos], rounding=wall, edges=["Z",BOT], anchor=FRONT+TOP) {
         // Make cuts for rails
