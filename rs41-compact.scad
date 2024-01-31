@@ -106,9 +106,8 @@ module headroom(center, anchor, spin=0, orient=UP) {
 module button(size) {
     elastic = 0.6;
     cut = 0.1;
-    r = 0;
-    e = [FWD+LEFT,BACK+LEFT];
-    tag("rm") cuboid([size, size, wall], rounding=r, edges=e) align(BOTTOM+RIGHT, inside=true) tag("keep") cuboid([size-cut,size-2*cut,elastic], rounding=r, edges=e);
+    wedge = 1;
+    tag("rm") prismoid(size, size+2*wedge, wall) right(cut) align(BOTTOM+LEFT, inside=true) tag("keep") cuboid([size+2*cut,size-2*cut,elastic]);
 }
 
 // Top part of the case, outer geometry
@@ -163,6 +162,7 @@ module top_part() tag_scope() diff("rm rm-upper","keep keep-upper") hide("rm-low
         // Remove inside rim
         tag("rm") align(FRONT+BOTTOM, inside=true) cube([rim_w, rim_h, raise[1] + cover_tolerance]);
 
+        // Button
         but_size = 8;
         align(BACK+LEFT+TOP, inside=true) right(wall+raise[0]) down(headroom_top_front-headroom_top_back) fwd(button_pos-but_size/2) button(but_size);
     }
