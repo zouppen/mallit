@@ -11,7 +11,7 @@ ant_adj = [-3,0,-1.1];
 tolerance = 0.2;
 support_rail = [4, 50];
 support_rail_start_y = 32;
-support_rail_b = [4, 27];
+support_rail_b = [4, 30];
 headroom_bot = 5;
 headroom_top_front = 18; // Not including the PCB!
 headroom_top_back = 6; // Not including the PCB!
@@ -26,6 +26,7 @@ raise = [1,1]; // Width, height
 cover_indent_z = 1; // Height of the holes in the front part
 cover_tolerance = 0.2; // Tolerance in the rails. One layer height is a good guess
 antenna_eccentricity_z = -1.2;
+pcb_hold_bar_y = 30; // Battery holder start
 much = 200;
 displace = "z";
 $fn = 100;
@@ -61,6 +62,9 @@ module pcb_positive() {
         }
         // PCB clearout area (top+bottom)
         align(TOP) down(headroom_bot+pcb[2]) headroom() {
+            // PCB supporter
+            tag("keep-upper") align(TOP+FRONT, inside=true) back(pcb_hold_bar_y-wall) cube([pcb[0], wall, headroom_top_front-cover_pos-cover_tolerance]) align(BOTTOM,BOTTOM) prismoid([pcb[0], wall], [wall,wall], cover_pos-pcb[2]);
+
             // Top pillar for the wedge
             tag("keep-upper") align(TOP+FRONT, inside=true) {
                 // The front wedge thingy
