@@ -116,8 +116,8 @@ module top_outer(center, anchor, spin=0, orient=UP) {
     size = [pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_top_front-cover_pos+raise[1]];
     gap = headroom_top_front-headroom_top_back;
     attachable(anchor,spin,orient, size=size) {
-        down(gap/2) cuboid(size-[0,0,gap], rounding=wall, edges=["Z",TOP])
-            align(BOTTOM+FRONT, inside=true) cuboid(size-[0,headroom_split_y+back_wall-wall,0], rounding=wall, edges=["Z",TOP]);
+        down(gap/2) cuboid(size-[0,0,gap], chamfer=wall, edges=["Z",TOP])
+            align(BOTTOM+FRONT, inside=true) cuboid(size-[0,headroom_split_y+back_wall-wall,0], chamfer=wall, edges=["Z",TOP]);
         children();
     }
 }
@@ -136,7 +136,7 @@ module wedge_thingy(remove_tag) {
 
 module bottom_part() tag_scope() diff("rm rm-lower", "keep keep-lower") hide("rm-upper keep-upper upper") {
     // Casing
-    move([0, -front_wall, cover_pos]) cuboid([pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_bot+cover_pos], rounding=wall, edges=["Z",BOT], anchor=FRONT+TOP) {
+    move([0, -front_wall, cover_pos]) cuboid([pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_bot+cover_pos], chamfer=wall, edges=["Z",BOT], anchor=FRONT+TOP) {
         // Make cuts for rails
         tag("rm") down(raise[1]) {
             for (a = [LEFT, RIGHT]) {
