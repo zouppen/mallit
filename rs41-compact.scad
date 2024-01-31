@@ -27,10 +27,9 @@ cover_indent_z = 1; // Height of the holes in the front part
 cover_tolerance = 0.2; // Tolerance in the rails. One layer height is a good guess
 button_pos = 14;
 antenna_eccentricity_z = -1.2;
-pcb_hold_bar_y = 30; // Battery holder start
+pcb_hold_bar_y = 29; // Mind the battery holder start
 much = 200;
 displace = "z";
-$fn = 100;
 
 // Lookup table for variable displace for handy ways to move covers for printing and side views
 displacements = struct_set([], ["x", [ -50,    0,   0],
@@ -94,7 +93,6 @@ module pcb_positive() {
 }
 
 module headroom(center, anchor, spin=0, orient=UP) {
-
     anchor = get_anchor(anchor, center, -[1,1,1], -[1,1,1]);
     size = [pcb[0], pcb[1], headroom_bot + headroom_top_front];
     attachable(anchor,spin,orient, size=size) {
@@ -107,7 +105,7 @@ module headroom(center, anchor, spin=0, orient=UP) {
 
 module button(size) {
     elastic = 0.6;
-    cut = 0.2;
+    cut = 0.1;
     r = 0;
     e = [FWD+LEFT,BACK+LEFT];
     tag("rm") cuboid([size, size, wall], rounding=r, edges=e) align(BOTTOM+RIGHT, inside=true) tag("keep") cuboid([size-cut,size-2*cut,elastic], rounding=r, edges=e);
@@ -165,7 +163,7 @@ module top_part() tag_scope() diff("rm rm-upper","keep keep-upper") hide("rm-low
         // Remove inside rim
         tag("rm") align(FRONT+BOTTOM, inside=true) cube([rim_w, rim_h, raise[1] + cover_tolerance]);
 
-        but_size = 7;
+        but_size = 8;
         align(BACK+LEFT+TOP, inside=true) right(wall+raise[0]) down(headroom_top_front-headroom_top_back) fwd(button_pos-but_size/2) button(but_size);
     }
     // Carve interior + antenna
