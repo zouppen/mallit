@@ -16,7 +16,7 @@ headroom_bot = 5;
 headroom_top_front = 18; // Not including the PCB!
 headroom_top_back = 6; // Not including the PCB!
 headroom_split_y = 23;
-cover_pos = 3;
+cover_pos = 4;
 cover_indent = 1.5;
 indent_width = 10;
 screw_hole_dist = 4.5;
@@ -84,7 +84,7 @@ module pcb_positive() {
         }
 
         // Back part wedge thingy
-        tag("keep-lower") move([0,wall+cover_tolerance,cover_pos]) align(BACK+BOTTOM) {
+        tag("keep-lower") move([0,wall+cover_tolerance,cover_pos-raise[1]]) align(BACK+BOTTOM) {
             cube([pcb[0],wall+cover_tolerance]) {
                 rotate([180,0,0]) wedge_thingy("rm-upper");
             }
@@ -142,7 +142,7 @@ module bottom_part() tag_scope() diff("rm rm-lower", "keep keep-lower") hide("rm
             for (a = [LEFT, RIGHT]) {
                 align(TOP+a) cube([wall, much, raise[1]]);
             }
-            align(TOP+BACK) cube([much,wall, raise[1]]);
+            align(TOP+BACK) cube([much,back_wall-wall, raise[1]]);
         }
     }
     // Carve interior + antenna
@@ -152,7 +152,7 @@ module bottom_part() tag_scope() diff("rm rm-lower", "keep keep-lower") hide("rm
 module top_part() tag_scope() diff("rm rm-upper","keep keep-upper") hide("rm-lower keep-lower lower") {
     // Include "rims"
     rim_w = pcb[0] + 2*raise[0] + 2*cover_tolerance;
-    rim_h = front_wall + pcb[1] + back_wall - wall + cover_tolerance;
+    rim_h = front_wall + pcb[1] + wall + cover_tolerance;
 
     move([0, -front_wall, headroom_top_front+wall]) top_outer(anchor=FRONT+TOP) {
         // Remove bottom margin
