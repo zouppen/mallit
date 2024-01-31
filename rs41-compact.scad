@@ -144,8 +144,6 @@ module bottom_part() tag_scope() diff("rm rm-lower", "keep keep-lower") hide("rm
             }
             align(TOP+BACK) cube([much,wall, raise[1]]);
         }
-        // PUPU logo
-        tag("rm") position(BOTTOM) linear_extrude(0.4) import_2d("/home/joell/vektori/pupu-logo.svg", [150.290,111.372], size=28, center=true);
     }
     // Carve interior + antenna
     tag("rm") pcb_positive();
@@ -162,9 +160,15 @@ module top_part() tag_scope() diff("rm rm-upper","keep keep-upper") hide("rm-low
         // Remove inside rim
         tag("rm") align(FRONT+BOTTOM, inside=true) cube([rim_w, rim_h, raise[1] + cover_tolerance]);
 
+        // PUPU logo
+        tag("rm") position(TOP) fwd(10) down(0.4) linear_extrude(0.4) import_2d("/home/joell/vektori/pupu-logo.svg", [150.290,111.372], size=28, center=true);
+
         // Button
         but_size = 8;
         align(BACK+LEFT+TOP, inside=true) right(wall+raise[0]) down(headroom_top_front-headroom_top_back) fwd(button_pos-but_size/2) button(but_size);
+
+        // LED hole
+        tag("rm") position(TOP+BACK+RIGHT) move([-5,-12,-headroom_top_front+headroom_top_back]) cylinder(h=wall, d=1.5, $fn=12, orient=BOTTOM);
     }
     // Carve interior + antenna
     tag("rm") pcb_positive();
