@@ -25,6 +25,7 @@ wall = 2;
 raise = [1,1]; // Width, height
 cover_indent_z = 1; // Height of the holes in the front part
 cover_tolerance = 0.2; // Tolerance in the rails. One layer height is a good guess
+button_pos = 14;
 antenna_eccentricity_z = -1.2;
 pcb_hold_bar_y = 30; // Battery holder start
 much = 200;
@@ -104,6 +105,14 @@ module headroom(center, anchor, spin=0, orient=UP) {
     }
 }
 
+module button(size) {
+    elastic = 0.6;
+    cut = 0.2;
+    r = 0;
+    e = [FWD+LEFT,BACK+LEFT];
+    tag("rm") cuboid([size, size, wall], rounding=r, edges=e) align(BOTTOM+RIGHT, inside=true) tag("keep") cuboid([size-cut,size-2*cut,elastic], rounding=r, edges=e);
+}
+
 // Top part of the case, outer geometry
 module top_outer(center, anchor, spin=0, orient=UP) {
     anchor = get_anchor(anchor, center, -[1,1,1], -[1,1,1]);
@@ -155,6 +164,9 @@ module top_part() tag_scope() diff("rm rm-upper","keep keep-upper") hide("rm-low
         tag("rm") align(BOTTOM, inside=true) cube([much,much,cover_tolerance]);
         // Remove inside rim
         tag("rm") align(FRONT+BOTTOM, inside=true) cube([rim_w, rim_h, raise[1] + cover_tolerance]);
+
+        but_size = 7;
+        align(BACK+LEFT+TOP, inside=true) right(wall+raise[0]) down(headroom_top_front-headroom_top_back) fwd(button_pos-but_size/2) button(but_size);
     }
     // Carve interior + antenna
     tag("rm") pcb_positive();
