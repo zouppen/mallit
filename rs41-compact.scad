@@ -27,7 +27,7 @@ cover_indent_z = 1; // Height of the holes in the front part
 cover_tolerance = 0.2; // Tolerance in the rails. One layer height is a good guess
 button_pos = 13;
 antenna_eccentricity_z = -1.2;
-pcb_hold_bar_y = 29; // Mind the battery holder start
+pcb_hold_bar_y = 28; // Mind the battery holder start
 much = 200;
 displace = "z";
 
