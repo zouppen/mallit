@@ -5,7 +5,7 @@ pcb = [37.4, 120.4, 1.2];
 conn = [12.4, 10, 7.2]; // Including pcb thickness
 conn_adj = [0, 5.65, pcb[2]];
 ant_h = 136;
-ant_d = 8;
+ant_d = 9;
 ant_inner_d = 1.8;
 ant_adj = [-3,0,-1.1];
 tolerance = 0.2;
@@ -26,7 +26,7 @@ raise = [1,1]; // Width, height
 cover_indent_z = 1; // Height of the holes in the front part
 cover_tolerance = 0.2; // Tolerance in the rails. One layer height is a good guess
 button_pos = 13;
-antenna_eccentricity_z = -1.2;
+antenna_eccentricity = [0.15,-2.34]; // From back
 pcb_hold_bar_y = 28; // Mind the battery holder start
 much = 200;
 displace = "z";
@@ -49,9 +49,9 @@ module pcb_positive() {
         move(conn_adj) align(LEFT+BACK+BOTTOM) cube(conn);
         // Antenna wire hole
         move(ant_adj) right(pcb[0]/2) attach(BACK) {
-            cylinder(h=wall, d1=ant_inner_d*3, d2=ant_inner_d, $fn=5, spin=180/5-90)
-            align(BOTTOM, inside=true) cylinder(h=ant_h, d=ant_inner_d, $fn=5);
-            tag("lower") back(antenna_eccentricity_z) cylinder(h=ant_h-wall, d=ant_d, anchor=BOTTOM, $fn=8, spin=180/8) attach(TOP) top_half() scale(1.085)sphere(d=ant_d, $fn=8); // Antenna outer part
+            cylinder(h=wall, d1=ant_inner_d*3, d2=ant_inner_d, $fn=6, spin=180/6)
+            align(BOTTOM, inside=true) cylinder(h=ant_h, d=ant_inner_d, $fn=6);
+            tag("lower") move(antenna_eccentricity) cylinder(h=ant_h-wall, d=ant_d, anchor=BOTTOM, $fn=8, spin=180/8) attach(TOP) top_half() up(0.5) scale(1.085) sphere(d=ant_d, $fn=8); // Antenna outer part
         }
         // Support rails
         tag("keep-lower") for (a = [LEFT, RIGHT]) {
