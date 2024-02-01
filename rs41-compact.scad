@@ -32,9 +32,10 @@ much = 200;
 displace = "z";
 
 // Lookup table for variable displace for handy ways to move covers for printing and side views
-displacements = struct_set([], ["x", [ -50,    0,   0],
-                                "y", [   0, -150,   0],
-                                "z", [   0,    0,  20]]);
+displacements = struct_set([], ["x",   [[ -50,    0,   0], 0, 0],
+                                "y",   [[   0, -150,   0], 0, 0],
+                                "z",   [[   0,    0,  20], 0, 0],
+                                "print", [[ 80, 0, headroom_top_front-headroom_bot], -45, [ 0, 180, -45]]]);
 
 // Derived constants
 front_wall = wall + cover_indent;
@@ -183,5 +184,7 @@ module import_2d(file_name, file_geom, size=1, center, anchor, spin) {
     }
 }
 
-bottom_part();
-move(struct_val(displacements, displace, [0,0,0])) top_part();
+placement = struct_val(displacements, displace, [[0,0,0],0,0]);
+
+rotate(placement[1]) bottom_part();
+move(placement[0]) rotate(placement[2]) top_part();
