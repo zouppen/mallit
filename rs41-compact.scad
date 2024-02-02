@@ -172,7 +172,7 @@ module top_part() tag_scope() diff("rm rm-upper" ,"keep keep-upper keep-color") 
         align(BACK+LEFT+TOP, inside=true) right(wall+raise[0]) down(headroom_top_front-headroom_top_back) fwd(button_pos-but_size/2) button(but_size);
 
         // LED hole
-        feature("white") position(TOP+BACK+RIGHT) move([-5,-12,-headroom_top_front+headroom_top_back]) cylinder(h=wall, d=1.5, $fn=12, orient=BOTTOM);
+        feature("white") position(TOP+BACK+RIGHT) move([-5,-12,headroom_top_back-headroom_top_front]) cylinder(h=wall, d=5, $fn=3, orient=BOTTOM);
     }
     // Carve interior + antenna
     tag("rm") pcb_positive();
