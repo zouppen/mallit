@@ -127,18 +127,24 @@ module top_outer(center, anchor, spin=0, orient=UP) {
 }
 
 module wedge_thingy(remove_tag) {
+    add_soluble = ends_with($tag, $part_name);
+
     for (a=[LEFT, RIGHT]) {
         // Opening for the wedge
         tag(remove_tag) align(BOTTOM+BACK+a) move([0, -wall, -cover_tolerance-cover_indent_z]) cube([indent_width, cover_indent+cover_tolerance, cover_indent]);
 
         // Wedge (positive part)
         wedge_w = indent_width-2*cover_tolerance;
-        align(BOTTOM+BACK+a) move(-cover_tolerance*a) cube([wedge_w,wall, cover_tolerance+cover_indent_z+cover_indent])
-            align(FRONT+BOTTOM) wedge([wedge_w,cover_indent,cover_indent], spin=[180,0,0]);
+        align(BOTTOM+BACK+a) move(-cover_tolerance*a) cube([wedge_w, wall, cover_tolerance+cover_indent_z+cover_indent])
+            align(FRONT+BOTTOM) wedge([wedge_w,cover_indent,cover_indent], spin=[180,0,0]) {
+            if (add_soluble) feature("red") align(BOTTOM) cube([wedge_w,cover_indent,cover_tolerance + cover_indent_z]);
+        }
+
     }
 }
 
 module bottom_part() tag_scope() diff("rm rm-lower", "keep keep-lower keep-color") hide("rm-upper keep-upper upper") final_touch(){
+    $part_name = "lower";
     // Casing
     move([0, -front_wall, cover_pos]) cuboid([pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_bot+cover_pos], chamfer=wall, edges=["Z",BOT], anchor=FRONT+TOP) {
         // Make cuts for rails
@@ -154,6 +160,7 @@ module bottom_part() tag_scope() diff("rm rm-lower", "keep keep-lower keep-color
 }
 
 module top_part() tag_scope() diff("rm rm-upper" ,"keep keep-upper keep-color") hide("rm-lower keep-lower lower") final_touch() {
+    $part_name = "upper";
     // Include "rims"
     rim_w = pcb[0] + 2*raise[0] + 2*cover_tolerance;
     rim_h = front_wall + pcb[1] + wall + cover_tolerance;
