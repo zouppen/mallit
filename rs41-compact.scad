@@ -29,7 +29,10 @@ button_pos = 13;
 antenna_eccentricity = [0.15,-2.34]; // From back
 pcb_hold_bar_y = 28; // Mind the battery holder start
 much = 200;
+
+// Display and STL export helpers
 displace = "z";
+show_color = false;
 
 // Lookup table for variable displace for handy ways to move covers for printing and side views
 displacements = struct_set([], ["x",   [[ -50,    0,   0], 0, 0],
@@ -135,7 +138,7 @@ module wedge_thingy(remove_tag) {
     }
 }
 
-module bottom_part() tag_scope() diff("rm rm-lower", "keep keep-lower") hide("rm-upper keep-upper upper") {
+module bottom_part() tag_scope() diff("rm rm-lower", "keep keep-lower keep-color") hide("rm-upper keep-upper upper") final_touch(){
     // Casing
     move([0, -front_wall, cover_pos]) cuboid([pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_bot+cover_pos], chamfer=wall, edges=["Z",BOT], anchor=FRONT+TOP) {
         // Make cuts for rails
@@ -150,7 +153,7 @@ module bottom_part() tag_scope() diff("rm rm-lower", "keep keep-lower") hide("rm
     tag("rm") pcb_positive();
 }
 
-module top_part() tag_scope() diff("rm rm-upper","keep keep-upper") hide("rm-lower keep-lower lower") {
+module top_part() tag_scope() diff("rm rm-upper" ,"keep keep-upper keep-color") hide("rm-lower keep-lower lower") final_touch() {
     // Include "rims"
     rim_w = pcb[0] + 2*raise[0] + 2*cover_tolerance;
     rim_h = front_wall + pcb[1] + wall + cover_tolerance;
@@ -162,14 +165,14 @@ module top_part() tag_scope() diff("rm rm-upper","keep keep-upper") hide("rm-low
         tag("rm") align(FRONT+BOTTOM, inside=true) cube([rim_w, rim_h, raise[1] + cover_tolerance]);
 
         // PUPU logo
-        tag("rm") position(TOP) fwd(10) down(0.4) linear_extrude(0.4) import_2d("/home/joell/vektori/pupu-logo.svg", [150.290,111.372], size=28, center=true);
+        feature("yellow") position(TOP) fwd(10) down(0.4) linear_extrude(0.4) import_2d("/home/joell/vektori/pupu-logo.svg", [150.290,111.372], size=28, center=true);
 
         // Button
         but_size = 8;
         align(BACK+LEFT+TOP, inside=true) right(wall+raise[0]) down(headroom_top_front-headroom_top_back) fwd(button_pos-but_size/2) button(but_size);
 
         // LED hole
-        tag("rm") position(TOP+BACK+RIGHT) move([-5,-12,-headroom_top_front+headroom_top_back]) cylinder(h=wall, d=1.5, $fn=12, orient=BOTTOM);
+        feature("white") position(TOP+BACK+RIGHT) move([-5,-12,-headroom_top_front+headroom_top_back]) cylinder(h=wall, d=1.5, $fn=12, orient=BOTTOM);
     }
     // Carve interior + antenna
     tag("rm") pcb_positive();
@@ -181,6 +184,24 @@ module import_2d(file_name, file_geom, size=1, center, anchor, spin) {
     attachable(anchor, spin, two_d=true, size=ratio*file_geom) {
         scale(ratio) move(-file_geom/2) import(file_name);
         children();
+    }
+}
+
+module feature(col) {
+    if (show_color == false) {
+        tag("rm") children(); // Carve
+    } else if (col == show_color) {
+        tag("keep-color") children();
+    } else {
+        recolor(col) children();
+    }
+}
+
+module final_touch() {
+    if (show_color == true || show_color == false) {
+        children();
+    } else {
+        show_only("keep-color") children();
     }
 }
 
