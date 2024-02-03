@@ -116,12 +116,13 @@ module button(size) {
 
 // Top part of the case, outer geometry
 module top_outer(center, anchor, spin=0, orient=UP) {
+    split_y = headroom_split_y + back_wall - wall;
     anchor = get_anchor(anchor, center, -[1,1,1], -[1,1,1]);
     size = [pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_top_front-cover_pos+raise[1]];
     gap = headroom_top_front-headroom_top_back;
     attachable(anchor,spin,orient, size=size) {
         down(gap/2) cuboid(size-[0,0,gap], chamfer=wall, edges=["Z",TOP])
-            align(BOTTOM+FRONT, inside=true) cuboid(size-[0,headroom_split_y+back_wall-wall,0], chamfer=wall, edges=["Z",TOP]);
+            align(BOTTOM+FRONT, inside=true) cuboid(size-[0,split_y,0], chamfer=wall, edges=["Z",TOP]);
         children();
     }
 }
