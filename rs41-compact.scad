@@ -142,6 +142,7 @@ module top_outer(center, anchor, spin=0, orient=UP) {
 
 module wedge_thingy(remove_tag) {
     add_soluble = ends_with($tag, $part_name);
+    soluble_w = 0.4;
     align(BOTTOM+BACK) cube([$parent_size[0]-2*cover_tolerance, wall, cover_tolerance+cover_indent_z+cover_indent]) {
 
         for (a=[LEFT, RIGHT]) {
@@ -151,7 +152,13 @@ module wedge_thingy(remove_tag) {
             // Wedge (positive part)
             wedge_w = indent_width-2*cover_tolerance;
             align(FRONT+BOTTOM+a) wedge([wedge_w,cover_indent,cover_indent], spin=[180,0,0]) {
-                if (add_soluble) feature("red") align(BOTTOM) cube([wedge_w,cover_indent,cover_tolerance + cover_indent_z]);
+                if (add_soluble) {
+                    feature("red") tag_scope() diff() align(BOTTOM) {
+                        // Make support only to open sides
+                        cube([wedge_w,cover_indent,cover_tolerance + cover_indent_z])
+                            tag("remove") align(FRONT, inside=true) cube([wedge_w-2*soluble_w,cover_indent-soluble_w, cover_tolerance + cover_indent_z]);
+                    }
+                }
             }
         }
     }
