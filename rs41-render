@@ -7,5 +7,5 @@ render() {
 # Filaments
 render 1 false
 render 2 '"yellow"'
-render 3 '"white"'
+render 3 '"blue"'
 render 5 '"red"'
