@@ -1,0 +1,11 @@
+#!/bin/sh -eu
+
+render() {
+    openscad -D 'displace="z"' -D "show_color=$2" -o "rs41-compact-$1.stl" "rs41-compact.scad"
+}
+
+# Filaments
+render 1 false
+render 2 '"yellow"'
+render 3 '"white"'
+render 5 '"red"'
