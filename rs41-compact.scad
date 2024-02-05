@@ -132,10 +132,13 @@ module top_outer(center, anchor, spin=0, orient=UP) {
                 [BACK+RIGHT,     [[ b_x, b_y, b_cen_z], BACK+RIGHT    , 0]]
                ];
     anchor = get_anchor(anchor, center, -[1,1,1], -[1,1,1]);
-    split_y = headroom_split_y + back_wall - wall;
+    split_y = headroom_split_y + back_wall - wall - raise[0]; // raise[0] thickens the wall
     attachable(anchor,spin,orient, size=size, override=override) {
-        down(gap/2) cuboid(size-[0,0,gap], chamfer=wall, edges=["Z",TOP])
+        down(gap/2) cuboid(size-[0,0,gap], chamfer=wall, edges=["Z",TOP]) {
             align(BOTTOM+FRONT, inside=true) cuboid(size-[0,split_y,0], chamfer=wall, edges=["Z",TOP]);
+            // Chamfer on the lower part of the top cover
+            align(TOP+BACK) back(wall-split_y) wedge([pcb[0]+2*raise[0], wall, wall]);
+        }
         children();
     }
 }
