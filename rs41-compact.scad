@@ -142,7 +142,7 @@ module top_outer(center, anchor, spin=0, orient=UP) {
 
 module wedge_thingy(remove_tag) {
     add_soluble = ends_with($tag, $part_name);
-    soluble_w = 0.4;
+    soluble_w = 0.5;
     align(BOTTOM+BACK) cube([$parent_size[0]-2*cover_tolerance, wall, cover_tolerance+cover_indent_z+cover_indent]) {
 
         for (a=[LEFT, RIGHT]) {
