@@ -117,11 +117,23 @@ module button(size) {
 
 // Top part of the case, outer geometry
 module top_outer(center, anchor, spin=0, orient=UP) {
-    split_y = headroom_split_y + back_wall - wall;
-    anchor = get_anchor(anchor, center, -[1,1,1], -[1,1,1]);
     size = [pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_top_front-cover_pos+raise[1]];
     gap = headroom_top_front-headroom_top_back;
-    attachable(anchor,spin,orient, size=size) {
+    b_x = size[0]/2;
+    b_y = size[1]/2;
+    b_cen_z = -gap/2;
+    b_top_z = size[2]/2-gap;
+    override = [
+                [BACK+TOP+LEFT,  [[-b_x, b_y, b_top_z], BACK+TOP+LEFT , 0]],
+                [BACK+TOP,       [[   0, b_y, b_top_z], BACK+TOP      , 0]],
+                [BACK+TOP+RIGHT, [[ b_x, b_y, b_top_z], BACK+TOP+RIGHT, 0]],
+                [BACK+LEFT,      [[-b_x, b_y, b_cen_z], BACK+LEFT     , 0]],
+                [BACK    ,       [[   0, b_y, b_cen_z], BACK          , 0]],
+                [BACK+RIGHT,     [[ b_x, b_y, b_cen_z], BACK+RIGHT    , 0]]
+               ];
+    anchor = get_anchor(anchor, center, -[1,1,1], -[1,1,1]);
+    split_y = headroom_split_y + back_wall - wall;
+    attachable(anchor,spin,orient, size=size, override=override) {
         down(gap/2) cuboid(size-[0,0,gap], chamfer=wall, edges=["Z",TOP])
             align(BOTTOM+FRONT, inside=true) cuboid(size-[0,split_y,0], chamfer=wall, edges=["Z",TOP]);
         children();
@@ -192,10 +204,10 @@ module top_part() tag_scope() diff("rm rm-upper" ,"keep keep-upper keep-color") 
 
         // Button
         but_size = 8;
-        align(BACK+LEFT+TOP, inside=true) right(wall+raise[0]) down(headroom_top_front-headroom_top_back) fwd(button_pos-but_size/2) button(but_size);
+        align(BACK+LEFT+TOP, inside=true) right(wall+raise[0]) fwd(button_pos-but_size/2) button(but_size);
 
         // LED hole
-        feature("white") position(TOP+BACK+RIGHT) move([-5,-12,headroom_top_back-headroom_top_front]) cylinder(h=wall, d=5, $fn=3, orient=BOTTOM);
+        feature("white") position(TOP+BACK+RIGHT) move([-5,-12]) cylinder(h=wall, d=5, $fn=3, orient=BOTTOM);
     }
     // Carve interior + antenna
     tag("rm") pcb_positive();
