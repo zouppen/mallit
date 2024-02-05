@@ -28,6 +28,7 @@ cover_tolerance = 0.2; // Tolerance in the rails. One layer height is a good gue
 button_pos = 13;
 antenna_eccentricity = [0.15,-2.34]; // From back
 pcb_hold_bar_y = 28; // Mind the battery holder start
+strap_opening = [25.6, 4];
 much = 200;
 
 // Display and STL export helpers
@@ -160,6 +161,20 @@ module bottom_part() tag_scope() diff("rm rm-lower", "keep keep-lower keep-color
     tag("rm") pcb_positive();
 }
 
+module strap_opening() {
+    // The walls
+    w = pcb[0]+2*(wall+raise[0]);
+    strap_wall = 1;
+    cube([pcb[0], strap_opening[0]+2*strap_wall, strap_opening[1]+2*strap_wall], anchor=TOP)
+        tag("remove") align(CENTER) cube([w,strap_opening[0],strap_opening[1]]) {
+        for (a = [LEFT, RIGHT]) {
+            // Rounding
+            move(-1*a) attach(a) prismoid(size1=strap_opening, size2=[strap_opening[0]+2, strap_opening[1]+2], h=2);
+        }
+        children();
+    }
+}
+
 module top_part() tag_scope() diff("rm rm-upper" ,"keep keep-upper keep-color") hide("rm-lower keep-lower lower") final_touch() {
     $part_name = "upper";
     // Include "rims"
@@ -215,5 +230,8 @@ module final_touch() {
 
 placement = struct_val(displacements, displace, [[0,0,0],0,0]);
 
-rotate(placement[1]) bottom_part();
+rotate(placement[1]) diff() {
+    bottom_part();
+    down(0.4) back(pcb[1]/2) strap_opening();
+};
 move(placement[0]) rotate(placement[2]) top_part();
