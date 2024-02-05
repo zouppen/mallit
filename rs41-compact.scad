@@ -142,18 +142,18 @@ module top_outer(center, anchor, spin=0, orient=UP) {
 
 module wedge_thingy(remove_tag) {
     add_soluble = ends_with($tag, $part_name);
+    align(BOTTOM+BACK) cube([$parent_size[0]-2*cover_tolerance, wall, cover_tolerance+cover_indent_z+cover_indent]) {
 
-    for (a=[LEFT, RIGHT]) {
-        // Opening for the wedge
-        tag(remove_tag) align(BOTTOM+BACK+a) move([0, -wall, -cover_tolerance-cover_indent_z]) cube([indent_width, cover_indent+cover_tolerance, cover_indent]);
+        for (a=[LEFT, RIGHT]) {
+            // Opening for the wedge
+            tag(remove_tag) align(FRONT+BOTTOM+a, inside=true) move(cover_tolerance*a) move([0, -cover_indent-cover_tolerance, 0]) cube([indent_width, cover_indent+cover_tolerance, cover_indent]);
 
-        // Wedge (positive part)
-        wedge_w = indent_width-2*cover_tolerance;
-        align(BOTTOM+BACK+a) move(-cover_tolerance*a) cube([wedge_w, wall, cover_tolerance+cover_indent_z+cover_indent])
-            align(FRONT+BOTTOM) wedge([wedge_w,cover_indent,cover_indent], spin=[180,0,0]) {
-            if (add_soluble) feature("red") align(BOTTOM) cube([wedge_w,cover_indent,cover_tolerance + cover_indent_z]);
+            // Wedge (positive part)
+            wedge_w = indent_width-2*cover_tolerance;
+            align(FRONT+BOTTOM+a) wedge([wedge_w,cover_indent,cover_indent], spin=[180,0,0]) {
+                if (add_soluble) feature("red") align(BOTTOM) cube([wedge_w,cover_indent,cover_tolerance + cover_indent_z]);
+            }
         }
-
     }
 }
 
