@@ -244,6 +244,6 @@ placement = struct_val(displacements, displace, [[0,0,0],0,0]);
 
 rotate(placement[1]) diff() {
     bottom_part();
-    down(0.4) back(pcb[1]/2) strap_opening();
+    if (show_color == false || show_color == true) down(0.4) back(pcb[1]/2) strap_opening();
 };
 move(placement[0]) rotate(placement[2]) top_part();
