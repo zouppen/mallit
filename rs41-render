@@ -8,4 +8,5 @@ render() {
 render 1 false
 render 2 '"yellow"'
 render 3 '"blue"'
+render 4 '"white"'
 render 5 '"red"'
