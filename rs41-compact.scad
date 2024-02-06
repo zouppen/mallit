@@ -210,8 +210,10 @@ module top_part() tag_scope() diff("rm rm-upper" ,"keep keep-upper keep-color") 
         tag("rm") align(FRONT+BOTTOM, inside=true) cube([rim_w, rim_h, raise[1] + cover_tolerance]);
 
         // PUPU logo
-        for (a = [["yellow", BACK], ["white", FWD]]) {
-            feature(a[0]) position(TOP) fwd(10) half_of(a[1], cp=[0,2,0]) import_2d("/home/joell/vektori/pupu-logo.svg", [150.290,111.372], size=28, anchor=TOP);
+        position(TOP) fwd(10) {
+            feature("yellow") half_of(BACK, cp=[0,2,0]) pupu(0.4)
+                feature("white") position(BOTTOM) half_of(BACK, cp=[0,2,0]) pupu(0.4);
+            feature("white") half_of(FWD, cp=[0,2,0]) pupu(0.4);
         }
 
         // Button
@@ -225,11 +227,14 @@ module top_part() tag_scope() diff("rm rm-upper" ,"keep keep-upper keep-color") 
     tag("rm") pcb_positive();
 }
 
+module pupu(extrude) {
+    import_2d("/home/joell/vektori/pupu-logo.svg", [150.290,111.372], size=28, anchor=TOP, extrude=extrude) children();
+}
 
 module import_2d(file_name, file_geom, size=1, center, anchor, spin, extrude=0.4) {
     anchor = get_anchor(anchor, center, [-1,-1], [-1,-1]);
     ratio = size/file_geom[0];
-    attachable(anchor, spin, size=list_insert(ratio*file_geom, 2, 0.4)) {
+    attachable(anchor, spin, size=list_insert(ratio*file_geom, 2, extrude)) {
         linear_extrude(extrude, center=true) scale(ratio) move(-file_geom/2) import(file_name);
         children();
     }
