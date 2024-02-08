@@ -1,5 +1,6 @@
 include <BOSL2/std.scad>
 include <BOSL2/structs.scad>
+include <elastobutton.scad>
 
 pcb = [37.4, 120.4, 1.2];
 conn = [12.4, 10, 7.2]; // Including pcb thickness
@@ -108,37 +109,10 @@ module headroom(center, anchor, spin=0, orient=UP) {
     }
 }
 
-module button(size) {
-    elastic = 0.6;
-    cut = 0.1;
-    wedge = 1;
-    tag("rm") prismoid(size, size+2*wedge, wall) right(cut) align(BOTTOM+LEFT, inside=true) tag("keep") cuboid([size+2*cut,size-2*cut,elastic]);
-}
-
 // Top part of the case, outer geometry
 module top_outer(center, anchor, spin=0, orient=UP) {
     size = [pcb[0]+2*side_wall, pcb[1]+front_wall+back_wall, wall+headroom_top_front-cover_pos+raise[1]];
-    gap = headroom_top_front-headroom_top_back;
-    b_x = size[0]/2;
-    b_y = size[1]/2;
-    b_cen_z = -gap/2;
-    b_top_z = size[2]/2-gap;
-    override = [
-                [BACK+TOP+LEFT,  [[-b_x, b_y, b_top_z], BACK+TOP+LEFT , 0]],
-                [BACK+TOP,       [[   0, b_y, b_top_z], BACK+TOP      , 0]],
-                [BACK+TOP+RIGHT, [[ b_x, b_y, b_top_z], BACK+TOP+RIGHT, 0]],
-                [BACK+LEFT,      [[-b_x, b_y, b_cen_z], BACK+LEFT     , 0]],
-                [BACK    ,       [[   0, b_y, b_cen_z], BACK          , 0]],
-                [BACK+RIGHT,     [[ b_x, b_y, b_cen_z], BACK+RIGHT    , 0]]
-               ];
-    anchor = get_anchor(anchor, center, -[1,1,1], -[1,1,1]);
-    split_y = headroom_split_y + back_wall - wall - raise[0]; // raise[0] thickens the wall
-    attachable(anchor,spin,orient, size=size, override=override) {
-        down(gap/2) cuboid(size-[0,0,gap], chamfer=wall, edges=["Z",TOP]) {
-            align(BOTTOM+FRONT, inside=true) cuboid(size-[0,split_y,0], chamfer=wall, edges=["Z",TOP]);
-            // Chamfer on the lower part of the top cover
-            align(TOP+BACK) back(wall-split_y) wedge([pcb[0]+2*raise[0], wall, wall]);
-        }
+    cuboid(size, chamfer=wall, edges=["Z",TOP], anchor=anchor, spin=spin, orient=orient) {
         children();
     }
 }
@@ -210,7 +184,7 @@ module top_part() tag_scope() diff("rm rm-upper" ,"keep keep-upper keep-color") 
         tag("rm") align(FRONT+BOTTOM, inside=true) cube([rim_w, rim_h, raise[1] + cover_tolerance]);
 
         // PUPU logo
-        position(TOP) fwd(10) {
+        position(TOP) {
             feature("yellow") half_of(BACK, cp=[0,2,0]) pupu(0.4)
                 feature("white") position(BOTTOM) half_of(BACK, cp=[0,2,0]) pupu(0.4);
             feature("white") half_of(FWD, cp=[0,2,0]) pupu(0.4);
@@ -218,10 +192,14 @@ module top_part() tag_scope() diff("rm rm-upper" ,"keep keep-upper keep-color") 
 
         // Button
         but_size = 8;
-        align(BACK+LEFT+TOP, inside=true) right(wall+raise[0]) fwd(button_pos-but_size/2) button(but_size);
+        shaft_h = 14;
+        align(BACK+LEFT+TOP, inside=true) right(wall+raise[0]) fwd(button_pos-but_size/2) elastobutton(but_size, shaft_h, raise[0]);
 
         // LED hole
-        feature("blue") position(TOP+BACK+RIGHT) move([-5,-12]) cylinder(h=wall, d=5, $fn=3, orient=BOTTOM);
+        position(TOP+BACK+RIGHT) move([-5,-12]) orient(BOTTOM) {
+            tag("rm") cylinder(h=shaft_h, d=5, $fn=3);
+            feature("blue") cylinder(1, d=5, $fn=3);
+        }
     }
     // Carve interior + antenna
     tag("rm") pcb_positive();
