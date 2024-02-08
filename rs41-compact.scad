@@ -206,7 +206,7 @@ module top_part() tag_scope() diff("rm rm-upper" ,"keep keep-upper keep-color") 
 }
 
 module pupu(extrude) {
-    import_2d("/home/joell/vektori/pupu-logo.svg", [150.290,111.372], size=28, anchor=TOP, extrude=extrude) children();
+    import_2d("assets/pupu-logo.svg", [150.290,111.372], size=28, anchor=TOP, extrude=extrude) children();
 }
 
 module import_2d(file_name, file_geom, size=1, center, anchor, spin, extrude=0.4) {
