@@ -1,8 +1,6 @@
 include <BOSL2/std.scad>
 
 pipe_d = 17.5;
-//pipe_outer_sep = 76.1;
-//pipe_sep = pipe_outer_sep-pipe_d;
 pipe_h = 20;
 pipe_gap = 10;
 hand_w = 4;
@@ -43,7 +41,7 @@ module guides() {
     }
 }
 
-difference() {
+diff() {
     cyl(h = hand_w, d=disc_d, chamfer1=1) {
         tune = 2;
         tag_scope() diff() for (pos=[FRONT,BACK]) {
@@ -51,10 +49,9 @@ difference() {
         }
     }
 
-    zip_pos = (pipe_d + zip_hole)/2;
-    tag("remove") for(x=[-zip_pos, zip_pos]) {
-        left(x) cube([zip_hole, zip_hole, hand_w], center=true);
+    tag("remove") for(rot=[0, 180]) {
+        zrot(rot) left((pipe_d + zip_hole)/2) cuboid([zip_hole, zip_hole, hand_w], chamfer=-hand_w/2, edges=[TOP+RIGHT]);
     }
 
-    guides();
+    force_tag("remove") guides();
 }
