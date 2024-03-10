@@ -8,6 +8,7 @@ pipe_gap = 10;
 hand_w = 4;
 disc_d = 89.5;
 disc_thin = 1.4;
+zip_hole = 5;
 
 thin_w = 3.3; // width of thinnig, ~1/8 inch
 thru_deg = 17; // through-the plate
@@ -35,20 +36,25 @@ module guide() {
 }
 
 module guides() {
-    tag_scope() diff() tag("remove") cyl(h=hand_w, d=disc_d-thin_w*2) tag("rest") {
+    tag_scope() diff() tag("remove") cyl(h=hand_w, d=disc_d-thin_w*2) tag("") {
         zrot(thru_deg/2-thin_deg) for (angle=[0, openings_deg, 180, 180+openings_deg]) {
             zrot(angle) guide();
         }
     }
 }
 
-difference () {
+difference() {
     cyl(h = hand_w, d=disc_d, chamfer1=1) {
         tune = 2;
         tag_scope() diff() for (pos=[FRONT,BACK]) {
             move(tune*pos) xrot(180) down(hand_w) align(TOP+pos) pipe_part();
         }
     }
-    guides();
 
+    zip_pos = (pipe_d + zip_hole)/2;
+    tag("remove") for(x=[-zip_pos, zip_pos]) {
+        left(x) cube([zip_hole, zip_hole, hand_w], center=true);
+    }
+
+    guides();
 }
