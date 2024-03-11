@@ -21,7 +21,7 @@ module pipe_part() {
     ang_out = 30;
     rounding = 1;
     teardrop(d=d+2*hand_w, h=pipe_h, ang=ang_out, cap_h=d/2, chamfer=rounding) {
-        tag("remove") teardrop(d=d, h=pipe_h, ang=ang_in, cap_h=d/2, chamfer=-rounding);
+        tag("remove") teardrop(d=d, h=pipe_h+0.01, ang=ang_in, chamfer=-rounding);
         children();
     }
 }
