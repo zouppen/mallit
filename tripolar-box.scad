@@ -27,6 +27,12 @@ guide_l = 9;
 guide_d = 3;
 guide_adj = 8;
 
+jussi = [55, 87.4, 14];
+jussi_round = 8;
+jussi_groove_w = 2;
+jussi_groove_pos = 6.2;
+jussi_print_aid = 1.8;
+
 $fn=6;
 inner_h = flat_cable_h+flat_cable_clearout;
 
@@ -44,9 +50,16 @@ module tripolar() {
     }
 }
 
+module jussi() {
+    tag_diff("jussi") back_half(y=-4) cuboid(jussi, rounding=jussi_round, edges=["Z"], $fn=100) {
+        align(BOTTOM, inside=true) tag("remove") up(jussi_groove_pos) rect_tube(h=jussi_groove_w+jussi_print_aid, size=[jussi[0], jussi[1]], wall=jussi_groove_w, irounding=jussi_round+2) {
+            tag("keep") back_half(y=-10.3)align(TOP, inside=true) prismoid(size1=[jussi[0]-2*jussi_groove_w,jussi[1]-2*jussi_groove_w], size2=[jussi[0],jussi[1]], h=jussi_print_aid, rounding=jussi_round+2, rounding2=jussi_round);
+        }
+    }
+}
 
-
-tag_diff("bottom") cuboid([inner_d + wall, inner_d + wall, inner_h+stop_screw_h+wall], chamfer=chamfer, edges=[BOTTOM,"Z"]) tag("remove") {
+tag_diff("bottom") cuboid([inner_d + wall, inner_d + wall, inner_h+stop_screw_h+wall-jussi[2]], chamfer=chamfer, edges=["Z"]) tag("remove") {
+    back(1) down(jussi[2]) align(BOTTOM+BACK, inside=true) jussi();
     align(TOP, inside=true) {
         keepout() {
             back(hole_d) position(FRONT) align(BOTTOM) xcopies(stop_screw_sep) cyl(h=stop_screw_h, d=hole_d);
