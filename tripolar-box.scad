@@ -14,7 +14,7 @@ flat_cable_h = 2.4;
 flat_cable_clearout = 5;
 stop_screw_h = 7;
 stop_screw_sep = 12.6;
-chamfer = 2;
+chamfer = 5;
 rect_edge = 1;
 tol = 0.2;
 
