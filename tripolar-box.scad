@@ -22,6 +22,10 @@ tripolar_d = 6.6;
 center_screw_d = 3;
 center_screw_indent = 2;
 center_screw_outer_d = 5.9;
+guide_w = 2.2;
+guide_l = 9;
+guide_d = 3;
+guide_adj = 8;
 
 $fn=6;
 inner_h = flat_cable_h+flat_cable_clearout;
@@ -55,7 +59,8 @@ tag_diff("bottom") cuboid([inner_d + wall, inner_d + wall, inner_h+stop_screw_h+
 
 up(40) tag_diff("top") cuboid([inner_d + wall, inner_d + wall, cover_h], chamfer=chamfer, edges=[TOP,"Z"]) {
     tag("remove") {
-        down(10) align(BOTTOM, inside=true) cyl(h=cover_h-top_wall+10, d=inner_d-1, $fn=200); // inside
+        down(10) align(BOTTOM, inside=true) cyl(h=cover_h-top_wall+10, d=inner_d-1, $fn=200) // inside
+            left(guide_adj) align(TOP) cube([guide_l, guide_w, guide_d]); // guide
         align(TOP, inside=true) tripolar();
         align(TOP, inside=true) cyl(h=center_screw_indent, d=center_screw_outer_d, $fn=60)
             align(BOTTOM) cyl(h=top_wall, d=center_screw_d);// center screw hole
