@@ -1,10 +1,10 @@
 include <BOSL2/std.scad>
 
+wall = 6;
 tv_depth = 58;
 support_z = 110;
-speaker = [340, 130];
+speaker = [340-wall, 130];
 hand = 20;
-wall = 6;
 spk_floor = wall;
 fence = 3.8;
 
