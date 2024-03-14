@@ -12,6 +12,7 @@ partition(spread=20, cutpath="dovetail", $slop=0.15, spin=90, size=[speaker[0], 
     tag("remove") align(TOP, inside=true) cuboid([speaker[0], speaker[1], fence]);
     xcopies(l = $parent_size[0]-wall, n=4) {
         align(BOTTOM+FRONT) cuboid([wall, wall, hand])
-            back(tv_depth) position(BACK+TOP) wedge([wall,speaker[1]-tv_depth,support_z], anchor=BOTTOM+FWD, orient=DOWN);
+            back(tv_depth) position(BACK+TOP) cuboid([wall, wall, support_z], anchor=TOP+FWD)
+            position(BACK+TOP) wedge([wall,speaker[1]-tv_depth-wall,support_z], anchor=BOTTOM+FWD, orient=DOWN);
     }
 };
