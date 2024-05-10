@@ -20,7 +20,9 @@ in_wire_pos = [12.5, pcb_rise+pcb_thickness+3];
 
 screw_stand = 9;
 screw_stand_move = 1.55;
-screw_inner_d = 2.5;
+screw_inner_d = 2.5; // between threads
+screw_upper_d = 7;
+screw_outer_d = 3.5; // cover hole
 screw_len = 15;
 
 ziptie_w = 3;
@@ -40,8 +42,20 @@ module feet() {
         }
     }
 }
-module case() {
-    cuboid(inner_dim+[2*wall, 2*wall, wall]) {
+
+module feet_upper() {
+    h = inner_dim[2] - pcb_rise - pcb_thickness - tol;
+    foot = inner_dim[0]-screw_sep[0]-tol;
+    fwd(pcb_pos_y) for(x = [-screw_sep[0]/2, screw_sep[0]/2]) {
+        for(y = [-screw_sep[1]/2, screw_sep[1]/2]) {
+            move([x,y]) {
+                cuboid([foot, foot, h]);
+            }
+        }
+    }
+}
+module bottom_part() {
+    cuboid(inner_dim+[2*wall, 2*wall, wall], anchor=TOP) {
         align(TOP, inside=true) cuboid(inner_dim) {
             tag("keep") align(BOTTOM, inside=true) {
                 feet();
@@ -51,7 +65,6 @@ module case() {
                 tag("keep") {
                     tag_scope() diff() {
                         align(BOTTOM+BACK) cuboid(pp_rest);
-                        //fwd(pp_align_y) position(BOTTOM+BACK) cyl(d=pp_align_d, h=pp_hole[1], anchor=BOTTOM, $fn=20);
                         tag("remove") fwd(pp_align_y) position(BOTTOM+BACK) cyl(d=pp_align_d+tol, h=pp_rest[2], anchor=TOP, $fn=20);
                     }
                 }
@@ -77,7 +90,36 @@ module case() {
     }
 }
 
+module top_part() {
+    // Start with the cover
+    cover_dim = [inner_dim[0]+2*wall, inner_dim[1]+2*wall, 0];
+    cuboid(cover_dim+[0,0,wall], anchor=BOTTOM) {
+        // Indent
+        align(BOTTOM) cuboid(cover_dim + [-wall,-wall,wall/2]);
+
+        // Feet
+        align(BOTTOM) feet_upper();
+
+        // Powerpole support
+        wallpush = wall+tol;
+        left(pp_hole_pos_x) fwd(wallpush) position(BACK+BOTTOM) cuboid([pp_rest[0], pp_rest[1]-wallpush, inner_dim[2]-pp_rest[2]-pp_hole[1]], anchor=TOP+BACK) {
+            // Guiding pole
+            fwd(pp_align_y-wallpush) position(BOTTOM+BACK) cyl(d=pp_align_d, h=pp_hole[1]+pp_rest[2]-tol, anchor=TOP, $fn=20);
+        }
+
+        tag("remove") for(pos = [-1,1]) left(screw_stand_move*pos) position(TOP+(BACK*pos)) {
+                fwd(pos*(wall+screw_stand/2)) cyl(d2=screw_upper_d, d1=screw_outer_d, h=1.5*wall, anchor=TOP, $fn=20);
+                }
+
+        // Grill
+        grill = [30, 1.5*wall, 1.5*wall];
+        tag("remove") fwd(pcb_pos_y) ycopies(3*wall, 10) align(TOP, inside=true) cuboid(grill);
+    }
+}
 
 diff() {
-    case();
+    up(20) top_part();
+}
+diff() {
+    bottom_part();
 }
