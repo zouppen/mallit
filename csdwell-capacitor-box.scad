@@ -21,13 +21,14 @@ shaft_skew_h = 30;
 pole_screw_y = 7.5;
 pole_screw_sep = 34.5;
 safe_angle = 45; // Print no steeper cliffs
+conn_room = 20;
 
 echo(wall+cap_h-11);
 
 diff() {
-    cuboid(pcb + [2*wall, 2*wall, cap_h+pcb_bot_room+1.5*wall], edges=["Z", TOP], chamfer=1) {
+    cuboid(pcb + [2*wall, 2*wall+conn_room, cap_h+pcb_bot_room+1.5*wall], edges=["Z", TOP], chamfer=1) {
         // PCB
-        align(BOTTOM, inside=true) cuboid(pcb + [0, 0, 0.5*wall+pcb_bot_room]) {
+        fwd(wall) align(BOTTOM+BACK, inside=true) cuboid(pcb + [0, 0, 0.5*wall+pcb_bot_room]) {
             // Capacitors
             down(tol) fwd(cap_move) align(TOP) {
                 grid_copies(cap_sep, [2,3]) cyl(d=cap_d, h=cap_h+tol, $fn=cap_fn);
@@ -40,7 +41,7 @@ diff() {
                     align(TOP) tag_intersect("remove") {
                         tag("intersect") prismoid(size1=cut, size2=cut+[fix, fix], h=room_h) {
                             // The rectangular part
-                            back(cap_move) tag("body") align(TOP, inside=true) cuboid([pcb[0], pcb[1], room_h], chamfer=wall, edges=TOP);
+                            back(cap_move-conn_room/2) tag("body") align(TOP, inside=true) cuboid([pcb[0], pcb[1]+conn_room, room_h], chamfer=wall, edges=TOP);
                         }
                     }
                 }
@@ -58,6 +59,6 @@ diff() {
 
         }
         // Bottom cover opening
-        align(BOTTOM, inside=true) cuboid([pcb[0]+wall, pcb[1]+wall, 0.5*wall]);
+        align(BOTTOM, inside=true) cuboid([pcb[0]+wall, pcb[1]+wall+conn_room, 0.5*wall]);
     }
 }
