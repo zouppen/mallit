@@ -20,6 +20,7 @@ shaft_h = 10;
 shaft_skew_h = 30;
 pole_screw_y = 7.5;
 pole_screw_sep = 34.5;
+safe_angle = 45; // Print no steeper cliffs
 
 echo(wall+cap_h-11);
 
@@ -34,8 +35,7 @@ diff() {
                 // Cut inner capacitor "pillars" to speed up printing
                 cut = [cap_sep[0], 2*cap_sep[1]];
                 room_h = cap_h+tol-shaft_h;
-                angle = 45;
-                fix = 2*room_h*tan(angle);
+                fix = 2*room_h*tan(safe_angle);
                 cube([cut[0], cut[1], shaft_h]) {
                     align(TOP) tag_intersect("remove") {
                         tag("intersect") prismoid(size1=cut, size2=cut+[fix, fix], h=room_h) {
