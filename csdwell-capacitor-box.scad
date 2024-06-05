@@ -34,7 +34,7 @@ ovp = [29, 26.4, 20];
 ovp_bot = 5;
 ovp_cham = 3.5;
 
-wireroom = [35, conn_room, ovp[2]];
+wireroom = [35, conn_room, ovp[2]+ovp_bot];
 wireroom_x = 5;
 
 echo(wall+cap_h-11);
@@ -103,6 +103,26 @@ diff() {
             tag("remove") move([-wall-ovp[0], wall+ovp[1]]) position(BOTTOM+RIGHT+FRONT) cuboid(pcb_bot_room, anchor=FRONT+LEFT+BOTTOM, chamfer=pcb_bot_room, edges=[FRONT+RIGHT]);
 
         }
+
+        // Feet
+        position(FRONT+LEFT+BOTTOM) foot(BACK+LEFT+BOTTOM, 0);
+        position(FRONT+RIGHT+BOTTOM) foot(BACK+RIGHT+BOTTOM, 0);
+        position(BACK+LEFT+BOTTOM) foot(BACK+RIGHT+BOTTOM, 180);
+        position(BACK+RIGHT+BOTTOM) foot(BACK+LEFT+BOTTOM, 180);
     }
 }
 
+module foot(anchor, spin) {
+    plateau_w = 10;
+    screw_up = 7;
+    screw_down = 4;
+
+    cuboid(plateau_w, chamfer=wall, edges=[FRONT+LEFT, FRONT+RIGHT], anchor=anchor, spin=spin) {
+        edge_profile(TOP+FRONT) mask2d_chamfer(sqrt(2)*plateau_w);
+        align(TOP, inside=true) cyl(d=screw_up, h=plateau_w-wall, $fn=20) {
+            align(BOTTOM) cyl(d2=screw_up, d1=screw_down, h=wall, $fn=20);
+        }
+        position(BACK+BOTTOM) cuboid([plateau_w, wall, plateau_w+wall], anchor=FRONT+BOTTOM, chamfer=wall, edges=[TOP+FRONT]);
+        children();
+    }
+}
