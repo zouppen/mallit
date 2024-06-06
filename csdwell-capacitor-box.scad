@@ -39,7 +39,7 @@ wireroom_x = 5;
 
 echo(wall+cap_h-11);
 
-diff() {
+module top_part() {
     cuboid(pcb + [2*wall, 2*wall+conn_room, cap_h+pcb_bot_room+1.5*wall], edges=["Z"], chamfer=1) {
         // Top rounding
         edge_profile(TOP) mask2d_chamfer(5);
@@ -126,3 +126,8 @@ module foot(anchor, spin) {
         children();
     }
 }
+
+diff() {
+    top_part();
+}
+
