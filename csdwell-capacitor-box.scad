@@ -26,6 +26,7 @@ safe_angle = 50; // Print no steeper cliffs
 
 pp_align_displace = 0.2;
 pp_hole = [60, 16.5, 15];
+pp_real_h = 8.2;
 pp_align_d = 2.1;
 pp_align_pos = 10;
 pp_pole_h = 11;
@@ -33,6 +34,7 @@ pp_pole_h = 11;
 ovp = [29, 26.4, 20];
 ovp_bot = 5;
 ovp_cham = 3.5;
+ovp_pcb = 1.2;
 
 wireroom = [35, conn_room, ovp[2]+ovp_bot];
 wireroom_x = 5;
@@ -40,7 +42,7 @@ wireroom_x = 5;
 echo(wall+cap_h-11);
 
 module top_part() {
-    cuboid(pcb + [2*wall, 2*wall+conn_room, cap_h+pcb_bot_room+1.5*wall], edges=["Z"], chamfer=1) {
+    cuboid(pcb + [2*wall, 2*wall+conn_room, cap_h+pcb_bot_room+1.5*wall], edges=["Z"], chamfer=1, anchor=BOTTOM) {
         // Top rounding
         edge_profile(TOP) mask2d_chamfer(5);
 
@@ -82,7 +84,7 @@ module top_part() {
         // Powerpole
         back(wall+conn_room/2-pp_hole[1]/2) align(LEFT+BOTTOM+FRONT, inside=true) tag_scope() diff("remove") {
             cuboid(pp_hole+[0,0,wall/2]) {
-                tag("remove") back(pp_align_displace) right(pp_align_pos) position(TOP+LEFT) cyl(d=pp_align_d, h=pp_pole_h, anchor=TOP, $fn=20);
+                //tag("remove") back(pp_align_displace) right(pp_align_pos) position(TOP+LEFT) cyl(d=pp_align_d, h=pp_pole_h, anchor=TOP, $fn=20);
                 // Overengineer
                 tag("remove") align(LEFT+FRONT, inside=true) cuboid([wall, pp_align_displace, $parent_size[2]], chamfer=pp_align_displace, edges=[RIGHT+BACK]);
             }
@@ -127,7 +129,36 @@ module foot(anchor, spin) {
     }
 }
 
+module bottom_part() {
+    nudge = wall/2-tol;
+    cuboid([pcb[0]+2*nudge, pcb[1]+2*nudge+conn_room, nudge], anchor=BOTTOM) {
+        // OVP support
+        align(TOP+RIGHT+FRONT) move([-wall/2, wall/2]) {
+            tag_diff("nudge_sup") {
+                cube([ovp[0]-2*tol, ovp[1]-2*tol, ovp_bot-ovp_pcb]);
+                tag("remove") cuboid([ovp[0]-2*tol, ovp[1]-2*tol, ovp_bot-ovp_pcb], chamfer=ovp_cham-2*tol, edges=["Z"]);
+            }
+        }
+
+        // Powerpole support
+        down(nudge) left(nudge) back(wall/2 + conn_room/2-pp_hole[1]/2) align(TOP+LEFT+FRONT) {
+            pp_real_l = ($parent_size[0]-wireroom[0])/2-wireroom_x;
+            cube([pp_real_l, pp_hole[1], pp_hole[2]-pp_real_h+wall/2]) {
+                // Overengineer II
+                tag("remove") align(LEFT+FRONT, inside=true) cuboid([wall, pp_align_displace, $parent_size[2]], chamfer=pp_align_displace, edges=[RIGHT+BACK]);
+
+                // Tap
+                back(pp_align_displace) fwd(pp_align_displace) right(pp_align_pos-0.4) position(TOP+LEFT) cyl(d=pp_align_d, h=pp_real_h-tol, anchor=BOTTOM, $fn=20);
+            }
+        }
+    }
+
+}
+
 diff() {
     top_part();
 }
 
+diff() {
+    down(20) bottom_part();
+}
