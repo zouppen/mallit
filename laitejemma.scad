@@ -8,7 +8,7 @@ cut_z = box[2]-cutsize-box_chamfer; // where the cut is
 // Device slots
 device_a=[98.1, 10.1, 70.1];
 device_a_pos = 16;
-device_b=[62.5, 10.1, 18.4];
+device_b=[62.5, 10.3, 18.4];
 device_b_pos = -16;
 
 // Finger slot
