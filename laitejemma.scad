@@ -1,4 +1,5 @@
 include <BOSL2/std.scad>
+include <laitejemma_devices.scad>
 
 box = [110,50,80];
 box_chamfer=2;
@@ -6,13 +7,6 @@ cutsize = 4; // How tall is the cut
 cut_z = box[2]-cutsize-box_chamfer; // where the cut is
 slot_extra = 1; // How much extra on y axis for the slots
 slot_extra_bottom = 1;
-
-// Device slots
-device_a=[98, 10, 69.8];
-device_a1_pos = -15;
-device_a2_pos = 15;
-device_b=[62.5, 10.5, 18];
-device_b_pos = 0;
 
 // Lock rod
 lock_rod = [box[0]-2,4,2];
