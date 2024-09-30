@@ -8,10 +8,10 @@ slot_extra = 1; // How much extra on y axis for the slots
 slot_extra_bottom = 1;
 
 // Device slots
-device_a=[98.1, 10.1, 70];
+device_a=[98, 10, 69.8];
 device_a1_pos = -15;
 device_a2_pos = 15;
-device_b=[62.5, 10.4, 18.4];
+device_b=[62.5, 10.5, 18];
 device_b_pos = 0;
 
 // Lock rod
@@ -19,7 +19,7 @@ lock_rod = [box[0]-2,4,2];
 lock_rod_handle = 4;
 
 // Finger slot
-fingerslot_wall_keepout = 2;
+fingerslot_wall_keepout = 5;
 fingerslot_d = 17;
 slot_guide = 7; // How long support for the devices on the bottom (on x axis)
 
@@ -35,13 +35,25 @@ module slidebox() {
             if ($partition_part == SECOND) {
                 down(box_chamfer+2*tol) align(TOP, inside=true) children();
             }
-            // Lock rod
+
+            // Lock rod opening
             align(TOP+LEFT, inside=true) {
                 // Rod hole
                 down(box_chamfer) cuboid(lock_rod);
                 // Rod insert
                 cuboid([lock_rod_handle, lock_rod[1], box_chamfer]);
             }
+
+            // Lock rod
+            up(2*spread) align(TOP+LEFT, inside=true) tag("") {
+                cuboid([lock_rod_handle-1-tol, lock_rod[1]-tol, box_chamfer+lock_rod[2]-tol], chamfer=box_chamfer, edges=[TOP+LEFT]) {
+                    position(BOTTOM+LEFT) {
+                        // Long part
+                        cuboid(lock_rod-[tol,tol,2*tol], anchor=BOTTOM+LEFT);
+                    }
+                }
+            }
+
         }
     }
 }
