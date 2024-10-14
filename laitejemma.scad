@@ -1,6 +1,8 @@
 include <BOSL2/std.scad>
 include <BOSL2/structs.scad>
 
+$no_top=false;
+
 box_chamfer=2;
 cutsize = 4; // How tall is the cut
 cut_z = box[2]-cutsize-box_chamfer; // where the cut is
@@ -22,10 +24,14 @@ tol = 0.1;
 cutpos = [0,-cut_z+tol-cutsize/2,0];
 spread = 50; // separate or not
 
+module skipper() {
+    if ($idx == 1 || !$no_top) children();
+}
+
 module slidebox() {
-    rotate(-cutaxis) move(-cutpos) partition([box[0],200,200],spread=spread, gap=2, cutsize=cutsize, cutpath="dovetail", $slop=tol/2) move(cutpos) rotate(cutaxis) {
+    rotate(-cutaxis) move(-cutpos) partition([box[0],200,200],spread=spread, gap=2, cutsize=cutsize, cutpath="dovetail") skipper() move(cutpos) rotate(cutaxis) {
         diff() cuboid(box, chamfer=box_chamfer, anchor=BOTTOM) {
-            if ($partition_part == SECOND) {
+            if ($idx == 1) {
                 down(box_chamfer+2*tol) align(TOP, inside=true) children();
             }
 
