@@ -1,12 +1,16 @@
 #!/bin/sh -eu
 
 render() {
-    openscad -D 'displace="z"' -D "show_color=$2" -o "rs41-compact-$1.stl" "rs41-compact.scad"
+    openscad -D 'displace="$1"' -D "show_color=$3" -o "rs41-compact-$2.stl" "rs41-compact.scad"
 }
 
-# Filaments
-render 1 false
-render 2 '"yellow"'
-render 3 '"blue"'
-render 4 '"white"'
-render 5 '"red"'
+# Different filaments for top
+render top top-1 false
+render top top-2 '"yellow"'
+render top top-3 '"blue"'
+render top top-4 '"white"'
+render top top-5 '"red"'
+
+# Bottom has only two single + PVA
+render bottom bottom-1 false
+render bottom bottom-5 '"red"'

@@ -40,7 +40,10 @@ show_color = false;
 displacements = struct_set([], ["x",   [[ -50,    0,   0], 0, 0],
                                 "y",   [[   0, -150,   0], 0, 0],
                                 "z",   [[   0,    0,  20], 0, 0],
-                                "print", [[ 80, 0, headroom_top_front-headroom_bot], -45, [ 0, 180, -45]]]);
+                                "print", [[ 80, 0, headroom_top_front-headroom_bot], -45, [ 0, 180, -45]],
+                                "top", [[ 0, 0, 0], false, [0,180,0]],
+                                "bottom", [[ 0, 0, 0], -45, false]
+                                ]);
 
 // Derived constants
 front_wall = wall + cover_indent;
@@ -238,8 +241,8 @@ module final_touch() {
 
 placement = struct_val(displacements, displace, [[0,0,0],0,0]);
 
-rotate(placement[1]) diff() {
+if (placement[1] != false) rotate(placement[1]) diff() {
     bottom_part();
     if (show_color == false || show_color == true) down(0.4) back(pcb[1]/2) strap_opening();
 };
-move(placement[0]) rotate(placement[2]) top_part();
+if (placement[2] != false) move(placement[0]) rotate(placement[2]) top_part();
