@@ -28,7 +28,7 @@ guide_d = 3;
 guide_adj = 8;
 
 jussi = [55, 87.4, 14];
-jussi_round = 8;
+jussi_round = 9;
 jussi_groove_w = 2;
 jussi_groove_pos = 6.2;
 jussi_print_aid = 1.8;
