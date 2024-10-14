@@ -17,4 +17,5 @@ partition(spread=20, cutpath="dovetail", spin=90, gap=1, size=[speaker[0], speak
             back(tv_depth) position(BACK+TOP) cuboid([wall, wall, support_z], anchor=TOP+FWD)
             position(BACK+TOP) wedge([wall,speaker[1]-tv_depth-wall,support_z], anchor=BOTTOM+FWD, orient=DOWN);
     }
+    for(pos=[LEFT,RIGHT]) back(tv_depth+wall) down(support_z) position(BOTTOM+FRONT+pos) tag("") wedge([(speaker[0])/3,wall,wall], anchor=BOTTOM+BACK+pos);
 };
