@@ -12,6 +12,7 @@ screw_hole_d = 2;
 dcdc_w = 25;
 fine_tune = [[1,0.5], [-1,0.5]]; // Snap to hexagon holes of the case
 
+// Credits of original work to SaveYourBacon, see .md file in external_assets/
 import("external_assets/Geekworm X1001 RPi 5 Case - Top.stl");
 
 diff() up(case_top) back(case_width/2 - dcdc_w/2) {
