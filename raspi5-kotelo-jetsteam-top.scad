@@ -28,8 +28,9 @@ screw_hole_d = 2;
 stuff_h = dcdc_h + shelf_h;
 eps = 0.1;
 top_z = 29.8;
-heppa_h = 0.4;
-heppa_pos = [-15, -41, top_z+stuff_h-heppa_h];
+logo_h = 0.4;
+logo_scale = 0.13;
+logo_pos = [0.5, -33, top_z+stuff_h-logo_h];
 
 drill_d = 6.2;
 drill_h = [16.7, 37.9];
@@ -93,5 +94,7 @@ diff() {
         }
 
     // Logo
-    //force_tag("remove") move(heppa_pos) linear_extrude(heppa_h+eps) import("assets/heppa.svg");
+    force_tag("remove") move(logo_pos) linear_extrude(logo_h+eps) {
+        scale(logo_scale) move([150.290, 111.372, 0]/-2) import("assets/pupu-logo.svg");
+    }
 }
