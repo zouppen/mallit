@@ -32,9 +32,11 @@ heppa_h = 0.4;
 heppa_pos = [-15, -41, top_z+stuff_h-heppa_h];
 
 drill_d = 6.2;
-drill_h = [25.45, 35.4];
+drill_h = [16.7, 37.9];
 drill_xs = [[-26.2,27.2], [-27.6,28.6]];
 drill_ys = [-37,46.5];
+drill_fill = 10; // Hack to fill the drill hole
+drill_fill_inner = 3.4;
 
 module separate(matrix, spread, cutpath) {
     // Transform the object, partition, and then transform back
@@ -78,9 +80,18 @@ diff() {
             move([x,drill_ys[yi],top_z+stuff_h]) cyl(d=drill_d, h=drill_h[yi], anchor=TOP, $fn=40) {
                 // Put countersink cone on the bottom
                 position(BOTTOM) cyl(d2=drill_d, d1=0, h=drill_d/2, anchor=TOP);
+
+                // Fill the original hole of the in first
+                if (yi == 0) {
+                    // Not using tube() since we need to drill the
+                    // inner hole because JetSteam put clever bridges
+                    // which we don't need in here.
+                    tag("filling") position(BOTTOM) cyl(d=drill_d, h=drill_fill, anchor=TOP);
+                    tag("remove") position(BOTTOM) cyl(d=drill_fill_inner, h=drill_fill, anchor=TOP);
+                }
             }
         }
 
     // Logo
-    force_tag("remove") move(heppa_pos) linear_extrude(heppa_h+eps) import("assets/heppa.svg");
+    //force_tag("remove") move(heppa_pos) linear_extrude(heppa_h+eps) import("assets/heppa.svg");
 }
