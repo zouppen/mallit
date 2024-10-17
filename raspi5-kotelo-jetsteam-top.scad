@@ -23,7 +23,8 @@ shelf_adjust = [-27.8, 1.8, stuff_z];
 dcdc_w = 25;
 dcdc_h = 20.6;
 dcdc_screw_sep = 58;
-screw_hole_d = 2;
+ziptie_hole = [1.5, 3];
+ziptie_extra = 3;
 
 stuff_h = dcdc_h + shelf_h;
 eps = 0.1;
@@ -58,12 +59,12 @@ diff() {
 
     tag_diff("hylly") move(shelf_adjust) {
         // Shelf
-        extra = (shelf_l-dcdc_screw_sep)/2;
+        extra = (shelf_l-dcdc_screw_sep+ziptie_extra)/2;
         cuboid([dcdc_w+extra, shelf_l, shelf_h], anchor=BOTTOM+LEFT, chamfer=6.8, edges=[LEFT+BACK]) {
             // Holes to it (do not punch top support bridge layer!)
             right(dcdc_w/2) position(LEFT+BOTTOM) ycopies(dcdc_screw_sep, 2) {
-                // No countersink since there would be no room for thread then
-                tag("remove") cyl(d=screw_hole_d, h=shelf_h+eps-0.2, $fn=20, anchor=BOTTOM);
+                // Zip tie slots instead of holes
+                tag("remove") cuboid([ziptie_hole[0], ziptie_hole[1], shelf_h+eps-0.2], anchor=BOTTOM);
             }
             // Keep out hole, magic values
             tag("remove") back(3.6) position(FWD+LEFT) cuboid([6.5,6,10], anchor=FWD+LEFT);
