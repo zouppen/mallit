@@ -17,7 +17,7 @@ support_dist = 93; // x distance between supports
 small_hole_depth=10;
 small_hole_d = 2.3;
 
-dc_converter_angle = 40;
+dc_converter_angle = 52;
 dc_converter_side = 75;
 dc_converter_hole_dist = 63;
 
@@ -49,9 +49,9 @@ module whole_plate() {
             }
             translate([0,0,plateau_depth+bottom_rise]) {
                 // DC Converter
-                translate([50,-6,0]) {
+                translate([41,-6,0]) {
                     difference() {
-                        wall(dc_converter_side,dc_converter_side,dc_converter_angle,30);
+                        wall(dc_converter_side,dc_converter_side,dc_converter_angle,40);
                         rotate([0,dc_converter_angle-90,0]) {
                             first = (dc_converter_side-dc_converter_hole_dist)/2;
                             hole(first,0);
@@ -61,7 +61,7 @@ module whole_plate() {
                 }
                 
                 // PicoUPS
-                translate([-30,7,0]) {
+                translate([-29.4,12,0]) {
                     rotate([0,0,90]) {
 
                         difference() {
@@ -73,8 +73,6 @@ module whole_plate() {
                                     }
                                 }
                             }
-                            // Screw helper
-                            translate([-1,0,ups_h-5]) rotate([0,90,0]) cylinder(13,20,20,$fn=6);
                         }
                     }
                 }
@@ -91,8 +89,6 @@ module whole_plate() {
                                     }
                                 }
                             }
-                            // Screw helper
-                            translate([-1,-10,rpi_h-5]) rotate([0,90,0]) cylinder(13,25,25,$fn=6);
                         }
                     }
                 }
@@ -129,7 +125,7 @@ module whole_plate() {
             translate([-support_dist/2-support_side,-height/2,0]) cube([support_side, support_side,max_depth]);
             
             // Risers not punctured
-            translate([-width/2,5,0]) cube([width/2,height/2,max_depth]);
+            translate([-width/2,12,0]) cube([width/2,height/2,max_depth]);
 
             // Attachment hole
             translate([-bottom_hole_dist/2-5,-5,0]) cube([20,10,max_depth]);
