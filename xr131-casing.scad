@@ -1,5 +1,8 @@
 include <BOSL2/std.scad>
 
+// BROKEN WITH RECENT VERSION OF BOSL2 (April 2024).
+// TODO FIXME BUGBUG MELTDOWN THIS NEEDS REFACTOR!
+
 screw_sep = [39, 71];
 screw_hole_d = 3.6;
 screw_safe_area = 2.5; // no component feet closer than this
@@ -45,7 +48,7 @@ module feet() {
 
 module feet_upper() {
     h = inner_dim[2] - pcb_rise - pcb_thickness - tol;
-    foot = inner_dim[0]-screw_sep[0]-tol;
+    foot = 7.2;
     fwd(pcb_pos_y) for(x = [-screw_sep[0]/2, screw_sep[0]/2]) {
         for(y = [-screw_sep[1]/2, screw_sep[1]/2]) {
             move([x,y]) {
@@ -107,19 +110,37 @@ module top_part() {
             fwd(pp_align_y-wallpush) position(BOTTOM+BACK) cyl(d=pp_align_d, h=pp_hole[1]+pp_rest[2]-tol, anchor=TOP, $fn=20);
         }
 
+        // Screw holes
         tag("remove") for(pos = [-1,1]) left(screw_stand_move*pos) position(TOP+(BACK*pos)) {
                 fwd(pos*(wall+screw_stand/2)) cyl(d2=screw_upper_d, d1=screw_outer_d, h=1.5*wall, anchor=TOP, $fn=20);
-                }
+            }
 
         // Grill
         grill = [30, 1.5*wall, 1.5*wall+0.2];
         tag("remove") up(0.1) position(TOP) fwd(pcb_pos_y) ycopies(3*wall, 10) cuboid(grill, anchor=TOP);
+
+        // Text
+        tag("texts") recolor("red") {
+            back(4) left(in_wire_pos[0]) position(FRONT+RIGHT+TOP) text3d("IN", h=0.4, size=5, anchor=CENTER+TOP);
+            fwd(4) left(13.5) position(BACK+RIGHT+TOP) text3d("OUT", h=0.4, size=5, spin=180, anchor=CENTER+TOP);
+        }
     }
 }
 
-diff() {
+module difftext(render_text) {
+    if (render_text) {
+        diff("remove runko", "texts") tag("runko") children();
+    } else {
+        diff("remove texts", "") children();
+    }
+}
+
+want_texts = false;
+
+difftext(want_texts) {
     up(20) top_part();
 }
-diff() {
+
+difftext(want_texts) {
     bottom_part();
 }
