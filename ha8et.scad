@@ -53,7 +53,7 @@ module cable_tie_cup(spacing, width = 1, height = 4, depth = 0.5) {
 }
 
 margin = 0.4;
-pcb = 1.6;
+pcb = 3.6;
 pcb_real = 2.2;
 h = 71.5+margin;
 pcb_surface = 6;
