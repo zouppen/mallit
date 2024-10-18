@@ -50,11 +50,18 @@ module topless_compound(height) {
     }
 }
 
-module riser(low_h, rise_h, ring_d) {
-    hull() {
-        // Sorry about the magic numbers, don't have time to solve equations
-        cylinder(low_h*0.997, d=1.524*low_h, $fn=5);
-        cylinder(low_h+rise_h, d=ring_d, $fn=100);
+module riser(low_h, rise_h, ring_d, guide_pos) {
+    union () {
+        difference() {
+            hull() {
+                // Sorry about the magic numbers, don't have time to solve equations
+                cylinder(low_h*0.997, d=1.524*low_h, $fn=5);
+                cylinder(low_h+rise_h, d=ring_d, $fn=100);
+            }
+            cube([2*low_h, 2*low_h, 2*low_h], center=true);
+        }
+        // Guide
+        //translate([guide_pos/2+2.5,0,low_h]) cube([5, 5, 2*guide_h], center=true);
     }
 }
 
@@ -70,11 +77,21 @@ riser_h = 20;
 // Base diameter (the outer ring of the lamp socket)
 base_d = 70;
 
+guide_h = 4;
+
+// Tolerance for the thingy
+tolerance = 0.1;
+
 // Set the final scale and make a hole for the lamp stuff
 difference() {
     union () {
-        topless_compound(shade_h);
-        riser(shade_h/2, riser_h, base_d);
+        difference() {
+            topless_compound(shade_h);
+            // Just the guiding square
+            translate([socket_d/2,0,shade_h/2]) cube([10+tolerance, 5+tolerance, 2*guide_h], center=true);
+        }
+
+        riser(shade_h/2, riser_h, base_d, socket_d);
     }
     cylinder(shade_h, d=socket_d, $fn=100);
 
