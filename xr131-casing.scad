@@ -112,8 +112,8 @@ module top_part() {
                 }
 
         // Grill
-        grill = [30, 1.5*wall, 1.5*wall];
-        tag("remove") fwd(pcb_pos_y) ycopies(3*wall, 10) align(TOP, inside=true) cuboid(grill);
+        grill = [30, 1.5*wall, 1.5*wall+0.2];
+        tag("remove") up(0.1) position(TOP) fwd(pcb_pos_y) ycopies(3*wall, 10) cuboid(grill, anchor=TOP);
     }
 }
 
