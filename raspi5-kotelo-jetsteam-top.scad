@@ -16,12 +16,14 @@ ziptie_hole = [1.5, 3];
 ziptie_extra = 3;
 shelf_gap = dcdc_screw_sep-8;
 
+origo = [-31.6, -47, -5.4];
+
 stuff_h = dcdc_h + shelf_h;
 eps = 0.1;
 top_z = 29.8;
 logo_h = 0.4;
-logo_scale = 0.13;
-logo_pos = [0.5, -33, top_z+stuff_h-logo_h];
+logo_scale = 0.15;
+logo_pos = [0, origo[1], top_z+stuff_h-16];
 
 drill_d = 6.2;
 drill_h = [16.7, 37.9];
@@ -30,6 +32,12 @@ drill_ys = [-37,46.5];
 drill_fill = 10; // Hack to fill the drill hole
 drill_fill_inner = 3.4;
 hanging_shelf = false;
+
+// Position of notch to ease filling it. Checked from the original
+// model using PrusaSlicer.
+notch_x = [-0.1, 1.2, 2.7];
+notch_y = [25, 41.305];
+notch_z = [6, 14.7, 16.9];
 
 module separate(matrix, spread, cutpath) {
     // Transform the object, partition, and then transform back
@@ -88,7 +96,20 @@ diff() {
         }
 
     // Logo
-    force_tag("remove") move(logo_pos) linear_extrude(logo_h+eps) {
-        scale(logo_scale) move([150.290, 111.372, 0]/-2) import("assets/pupu-logo.svg");
+    move(logo_pos) xrot(90) {
+        logo_size = [150.290, 111.372];
+
+        minkowski() {
+            linear_extrude(0.01) {
+                scale(logo_scale) move(logo_size/-2) import("assets/pupu-logo.svg");
+            }
+            wedge([0.01, logo_h, logo_h]);
+        }
+    }
+
+    // Remove the matching structure for bottom part notch
+    tag("remove") move(origo) {
+        cuboid(p1=[notch_x[0], notch_y[0], notch_z[0]], p2=[notch_x[2], notch_y[1], notch_z[1]]);
+        cuboid(p1=[notch_x[1], notch_y[0], notch_z[1]], p2=[notch_x[2], notch_y[1], notch_z[2]]);
     }
 }
