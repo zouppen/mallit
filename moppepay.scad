@@ -37,15 +37,9 @@ module creditbox() {
     ch = 3;
 
     // Box boundaries just for the attachment
-    tag_this("hidden") cuboid(creditbox) {
-        position(TOP+FWD) prismoid(size1=[creditbox[0], creditbox[1]], size2=[creditbox[0]-2*ch, creditbox[1]-ch], h=creditbox[2], rounding1=rounding, rounding2=0.7*rounding, shift=[0,-ch/2], anchor=TOP+FWD, $fn=200);
-        //position(BOTTOM) cuboid([creditbox[0], creditbox[1], creditbox[2]-h], rounding=rounding, edges="Z", anchor=BOTTOM, $fn=100);
+    prismoid(size1=[creditbox[0], creditbox[1]], size2=[creditbox[0]-2*ch, creditbox[1]-ch], h=creditbox[2], rounding1=rounding, rounding2=0.7*rounding, shift=[0,-ch/2], $fn=200) {
         children();
     }
-    //        cuboid(creditbox-[0,0,-1], rounding=rounding, edges="Z", $fn=200);
-    //        children();
-        //
-    //    }
 }
 
 diff("remove", "keep") hide("hidden") color_tag(1, "", "", "remove") {
