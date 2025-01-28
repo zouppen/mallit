@@ -4,8 +4,9 @@ $align_msg=false;
 
 hole_sep = 65;
 hole_d = 8.3;
-hole_inner_d = 6.9;
-ring_h = 5;
+hole_inner_d = 7;
+hole_indent = 1;
+ring_h = 2;
 screw_d = 4.2;
 screw_wall = 1;
 
@@ -49,9 +50,12 @@ diff("remove", "keep") hide("hidden") color_tag(1, "", "", "remove") {
         xcopies(hole_sep, 2) {
             $fn = 70;
             // Screw you
-            color_tag(2, "", "", undef) align(BOTTOM) zcyl(d=hole_d, h=ring_h);
-            // Cut screw opening
-            tag("remove") cyl(30, d=hole_inner_d);
+            color_tag(1, "", "", undef) align(BOTTOM) zcyl(d=hole_d, h=ring_h) {
+                // Cut screw opening
+                align(BOTTOM, inside=true) {
+                    zfight(down(eps)) cyl(hole_indent+eps, d=hole_inner_d);
+                }
+            }
         }
         color_tag(2, "remove", "keep", undef, "juku") align(TOP, inside=true) zrot(180) zfight(up(eps)) logo(text_indent);
     }
