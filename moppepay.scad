@@ -3,16 +3,16 @@ include <BOSL2/std.scad>
 $align_msg=false;
 
 hole_sep = 65;
-hole_d = 8.3;
+hole_d = 8.4;
 hole_inner_d = 7;
 hole_indent = 1;
 ring_h = 2;
 screw_d = 4.2;
 screw_wall = 1;
 
-creditcard = [53.98, 85.6, 0.6];
-creditbox = [90, 90, 6];
-credit_margin = 0.2;
+creditcard = [85.6, 53.98, 0.6];
+creditbox = [100, 65, 6];
+credit_margin = 0.4;
 rounding = 10;
 
 creditcard_real = add_scalar(creditcard, credit_margin);
@@ -21,8 +21,6 @@ fingerhole = 16;
 text_indent = 0.4;
 raise = 4.2;
 eps = 0.02;
-
-//$fn=100;
 
 color=0;
 
@@ -45,7 +43,10 @@ module creditbox() {
 
 diff("remove", "keep") hide("hidden") color_tag(1, "", "", "remove") {
     creditbox() {
-        tag("remove") move([0,-eps,-eps]) align(FRONT+BOTTOM, inside=true) cuboid(creditcard_real + [0, 1, raise+eps], chamfer=raise+eps, edges=[LEFT+BOTTOM, RIGHT+BOTTOM, BACK+BOTTOM]);
+        tag("remove") move([0,-eps,-eps]) align(FRONT+BOTTOM, inside=true) {
+            // Card cut, triangular
+            up(raise/2) cuboid(creditcard_real + [0, eps, raise/2+eps], chamfer=raise/2+eps, edges=[LEFT+BOTTOM, RIGHT+BOTTOM, BACK+BOTTOM]);
+        }
         tag("remove") position(FRONT) zcyl(h=30, d=fingerhole, $fn=100);
         xcopies(hole_sep, 2) {
             $fn = 70;
@@ -67,7 +68,7 @@ module zfight(tr) {
 }
 
 module logo(h) {
-    size = [90, 90, h];
+    size = [100, 100, h];
     attachable(cp=size/2, size=size) {
         linear_extrude(h) import("assets/moppepay.svg");
         children();
