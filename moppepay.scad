@@ -2,11 +2,12 @@ include <BOSL2/std.scad>
 
 $align_msg=false;
 
+ring_h = 3;
 hole_sep = 65;
 hole_d = 8.4;
-hole_inner_d = 7;
-hole_indent = 1;
-ring_h = 2;
+hole_inner_d = 7.8;
+hole_indent = ring_h-1.05;
+hole_indent_bump = 0.4;
 screw_d = 4.2;
 screw_wall = 1;
 
@@ -24,7 +25,7 @@ eps = 0.02;
 
 color=0;
 
-module color_tag(my_color, zero, hit, miss, juku) {
+module color_tag(my_color, zero, hit, miss) {
     my_tag = color == 0 ? zero : color == my_color ? hit : miss;
 
     if (my_tag != undef) {
@@ -41,24 +42,44 @@ module creditbox() {
     }
 }
 
+module credit_hole(margin) {
+    tag("remove") move([0,-eps,-eps]) align(FRONT+BOTTOM, inside=true) {
+        // Card cut, triangular
+        up(raise/2+margin/2) cuboid(creditcard_real + [-margin, eps-margin/2, raise/2+eps-margin], chamfer=raise/2+eps, edges=[LEFT+BOTTOM, RIGHT+BOTTOM, BACK+BOTTOM]);
+    }
+    tag("remove") position(FRONT) zcyl(h=30, d=fingerhole-margin, $fn=100);
+}
+
+/*
+!intersect() {
+    tag("intersect") creditbox() {
+        credit_hole(0.2);
+        tag("keep") align(FRONT+BOTTOM) cube(5);
+    }
+}
+*/
+
 diff("remove", "keep") hide("hidden") color_tag(1, "", "", "remove") {
     creditbox() {
-        tag("remove") move([0,-eps,-eps]) align(FRONT+BOTTOM, inside=true) {
-            // Card cut, triangular
-            up(raise/2) cuboid(creditcard_real + [0, eps, raise/2+eps], chamfer=raise/2+eps, edges=[LEFT+BOTTOM, RIGHT+BOTTOM, BACK+BOTTOM]);
-        }
-        tag("remove") position(FRONT) zcyl(h=30, d=fingerhole, $fn=100);
+        credit_hole(0);
         xcopies(hole_sep, 2) {
             $fn = 70;
             // Screw you
             color_tag(1, "", "", undef) align(BOTTOM) zcyl(d=hole_d, h=ring_h) {
                 // Cut screw opening
                 align(BOTTOM, inside=true) {
-                    zfight(down(eps)) cyl(hole_indent+eps, d=hole_inner_d);
+                    zfight(down(eps)) cyl(hole_indent+eps, d=hole_inner_d) {
+                        // Add bumps
+                        for (side = [0, 90, 180, 270]) {
+                            tag("keep") {
+                                zrot(side) fwd(hole_inner_d/2) cuboid([hole_indent_bump*2, hole_indent_bump, $parent_size[2]], anchor=FWD, chamfer = hole_indent_bump/3, edges=[BOTTOM+BACK, BACK+LEFT, BACK+RIGHT]);
+                            }
+                        }
+                    }
                 }
             }
         }
-        color_tag(2, "remove", "keep", undef, "juku") align(TOP, inside=true) zrot(180) zfight(up(eps)) logo(text_indent);
+        color_tag(2, "remove", "keep", undef) align(TOP, inside=true) zrot(180) zfight(up(eps)) logo(text_indent);
     }
 
 }
