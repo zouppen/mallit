@@ -2,12 +2,9 @@ include <BOSL2/std.scad>
 
 $align_msg=false;
 
-ring_h = 3;
+ring_h = 1.05;
 hole_sep = 65;
 hole_d = 8.4;
-hole_inner_d = 7.8;
-hole_indent = ring_h-1.05;
-hole_indent_bump = 0.4;
 screw_d = 4.2;
 screw_wall = 1;
 
@@ -16,9 +13,15 @@ creditbox = [100, 65, 6];
 credit_margin = 0.4;
 rounding = 10;
 
+tape_indent = [45, 20, 0.8];
+tape_rounding = 1;
+
 creditcard_real = add_scalar(creditcard, credit_margin);
 
-fingerhole = 16;
+finger_curve = 8;
+finger_w = 28;
+finger_h = 6;
+
 text_indent = 0.4;
 raise = 4.2;
 eps = 0.02;
@@ -47,7 +50,7 @@ module credit_hole(margin) {
         // Card cut, triangular
         up(raise/2+margin/2) cuboid(creditcard_real + [-margin, eps-margin/2, raise/2+eps-margin], chamfer=raise/2+eps, edges=[LEFT+BOTTOM, RIGHT+BOTTOM, BACK+BOTTOM]);
     }
-    tag("remove") position(FRONT) zcyl(h=30, d=fingerhole-margin, $fn=100);
+    zfight(fwd(eps)) align(FRONT, inside=true) fingerhole(30);
 }
 
 /*
@@ -65,21 +68,11 @@ diff("remove", "keep") hide("hidden") color_tag(1, "", "", "remove") {
         xcopies(hole_sep, 2) {
             $fn = 70;
             // Screw you
-            color_tag(1, "", "", undef) align(BOTTOM) zcyl(d=hole_d, h=ring_h) {
-                // Cut screw opening
-                align(BOTTOM, inside=true) {
-                    zfight(down(eps)) cyl(hole_indent+eps, d=hole_inner_d) {
-                        // Add bumps
-                        for (side = [0, 90, 180, 270]) {
-                            tag("keep") {
-                                zrot(side) fwd(hole_inner_d/2) cuboid([hole_indent_bump*2, hole_indent_bump, $parent_size[2]], anchor=FWD, chamfer = hole_indent_bump/3, edges=[BOTTOM+BACK, BACK+LEFT, BACK+RIGHT]);
-                            }
-                        }
-                    }
-                }
-            }
+            align(BOTTOM) zcyl(d=hole_d, h=ring_h);
         }
         color_tag(2, "remove", "keep", undef) align(TOP, inside=true) zrot(180) zfight(up(eps)) logo(text_indent);
+        // Tape indent
+        zfight(down(eps)) align(BOTTOM, inside=true) cuboid(tape_indent, rounding=tape_rounding, edges="Z");
     }
 
 }
@@ -94,4 +87,17 @@ module logo(h) {
         linear_extrude(h) import("assets/moppepay.svg");
         children();
     }
+}
+
+module fingerhole(h) {
+    bez = [[-finger_w/2, 0], // pt
+           [-finger_w/2+finger_curve, 0], // cp
+           [-finger_curve, finger_h], // cp
+           [0, finger_h], // pt
+           [finger_curve, finger_h], // cp
+           [finger_w/2-finger_curve, 0], // cp
+           [finger_w/2, 0], // pt
+           ];
+    pts = bezpath_curve(bez, splinesteps=32);
+    linear_sweep(pts, h=h) children();
 }
