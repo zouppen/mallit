@@ -24,7 +24,7 @@ finger_h = 6;
 
 text_indent = 0.4;
 raise = 4.2;
-eps = 0.02;
+eps = 0.01;
 
 color=0;
 
@@ -46,23 +46,14 @@ module creditbox() {
 }
 
 module credit_hole(margin) {
-    tag("remove") move([0,-eps,-eps]) align(FRONT+BOTTOM, inside=true) {
+    tag("remove") align(FRONT+BOTTOM, inside=true, shiftout=eps) {
         // Card cut, triangular
-        up(raise/2+margin/2) cuboid(creditcard_real + [-margin, eps-margin/2, raise/2+eps-margin], chamfer=raise/2+eps, edges=[LEFT+BOTTOM, RIGHT+BOTTOM, BACK+BOTTOM]);
+        up(raise/2+margin/2) cuboid(creditcard_real + [-margin, margin/2, raise/2-margin], chamfer=raise/2, edges=[LEFT+BOTTOM, RIGHT+BOTTOM, BACK+BOTTOM]);
     }
-    zfight(fwd(eps)) align(FRONT, inside=true) fingerhole(30);
+    align(FRONT, inside=true, shiftout=eps) fingerhole(30);
 }
 
-/*
-!intersect() {
-    tag("intersect") creditbox() {
-        credit_hole(0.2);
-        tag("keep") align(FRONT+BOTTOM) cube(5);
-    }
-}
-*/
-
-diff("remove", "keep") hide("hidden") color_tag(1, "", "", "remove") {
+diff("remove", "keep") color_tag(1, "", "", "remove") {
     creditbox() {
         credit_hole(0);
         xcopies(hole_sep, 2) {
@@ -70,15 +61,11 @@ diff("remove", "keep") hide("hidden") color_tag(1, "", "", "remove") {
             // Screw you
             align(BOTTOM) zcyl(d=hole_d, h=ring_h);
         }
-        color_tag(2, "remove", "keep", undef) align(TOP, inside=true) zrot(180) zfight(up(eps)) logo(text_indent);
+        color_tag(2, "remove", "keep", undef) align(TOP, inside=true, shiftout=eps) zrot(180) logo(text_indent);
         // Tape indent
-        zfight(down(eps)) align(BOTTOM, inside=true) cuboid(tape_indent, rounding=tape_rounding, edges="Z", $fn=30);
+        align(BOTTOM, inside=true, shiftout=eps) cuboid(tape_indent, rounding=tape_rounding, edges="Z", $fn=30);
     }
 
-}
-
-module zfight(tr) {
-    multmatrix($preview ? tr : IDENT) children();
 }
 
 module logo(h) {
