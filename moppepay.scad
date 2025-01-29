@@ -72,7 +72,7 @@ diff("remove", "keep") hide("hidden") color_tag(1, "", "", "remove") {
         }
         color_tag(2, "remove", "keep", undef) align(TOP, inside=true) zrot(180) zfight(up(eps)) logo(text_indent);
         // Tape indent
-        zfight(down(eps)) align(BOTTOM, inside=true) cuboid(tape_indent, rounding=tape_rounding, edges="Z");
+        zfight(down(eps)) align(BOTTOM, inside=true) cuboid(tape_indent, rounding=tape_rounding, edges="Z", $fn=30);
     }
 
 }
@@ -98,6 +98,6 @@ module fingerhole(h) {
            [finger_w/2-finger_curve, 0], // cp
            [finger_w/2, 0], // pt
            ];
-    pts = bezpath_curve(bez, splinesteps=32);
+    pts = bezpath_curve(bez, splinesteps=50);
     linear_sweep(pts, h=h) children();
 }
