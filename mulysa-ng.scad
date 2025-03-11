@@ -75,7 +75,7 @@ module logo(s, h) {
     attachable(cp=size/2, size=size) {
         minkowski() {
             scale(s/20) linear_extrude(eps) import("assets/mulysa-hahmo.svg");
-            wedge([eps, h, h], orient=BACK, anchor=BACK);
+            zrot(180) wedge([eps, h, h], orient=BACK, anchor=BACK);
         }
         children();
     }
