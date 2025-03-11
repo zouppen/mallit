@@ -12,6 +12,9 @@ drill_ys = [-19,39];
 base_support=1;
 screw_hole = 2.7;
 layer_h = 0.1;
+back_y = 50.5;
+sd_w = 12;
+sd_l = 11;
 
 // Position of notch to ease filling it. Checked from the original
 // model using PrusaSlicer.
@@ -60,4 +63,6 @@ diff() {
         tag("remove") move([x, slide]) cyl(d=bot_wall+2*screw_d, h=bot_wall, anchor=BOTTOM, $fn = 30);
     }
 
+    // Cut for the SD card
+    tag("remove") back(back_y) cuboid([sd_w, sd_l, 5], anchor=BOTTOM+BACK);
 }

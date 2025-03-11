@@ -39,9 +39,14 @@ notch_x = [-0.1, 1.2, 2.7];
 notch_y = [25, 41.305];
 notch_z = [6, 14.7, 16.9];
 
+back_y = 50.5-2.6;
+sd_w = 12+2;
+sd_wedge = 4.5;
+sd_wedge_z = 0.6;
+
 module separate(matrix, spread, cutpath) {
     // Transform the object, partition, and then transform back
-    multmatrix(matrix_inverse(matrix))
+    multmatrix(rot_inverse(matrix))
         partition([200,200,200], spread=spread, cutpath=cutpath)
         multmatrix(matrix) children();
 }
@@ -111,5 +116,19 @@ diff() {
     tag("remove") move(origo) {
         cuboid(p1=[notch_x[0], notch_y[0], notch_z[0]], p2=[notch_x[2], notch_y[1], notch_z[1]]);
         cuboid(p1=[notch_x[1], notch_y[0], notch_z[1]], p2=[notch_x[2], notch_y[1], notch_z[2]]);
+    }
+
+    up(sd_wedge_z) back(back_y) {
+        // Shelf for the SD card
+        tag_diff("keep") wedge([sd_w, sd_wedge, sd_wedge], anchor=BOTTOM+FRONT, spin=180) {
+            for (side = [LEFT, RIGHT]) {
+                position(BOTTOM+BACK+side) cube([1,sd_wedge+2.6,3], anchor=TOP+BACK+side);
+            }
+        }
+        // Add opening for the SD card
+        tag("remove") cube([sd_w, sd_wedge, sd_wedge], anchor=TOP+FRONT);
+        // Cut the stupid inset
+        buttonthing_cutbox = [40, 5, 10];
+        tag("remove") cuboid(buttonthing_cutbox, anchor=BOTTOM+BACK);
     }
 }
