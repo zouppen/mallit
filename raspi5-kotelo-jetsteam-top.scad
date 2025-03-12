@@ -3,6 +3,11 @@
 
 include <BOSL2/std.scad>
 
+// This causes segment angle normals to be no more than 1° apart as
+// long as the segment length is at least 0.2.
+$fa = 1;
+$fs = 0.2;
+
 // Dimensions checked from the original model using PrusaSlicer.
 stuff_z = 27.75;
 
@@ -85,7 +90,7 @@ diff() {
 
     // Enlarge screw holes
     tag("remove") for(yi = [0,1]) for(x = drill_xs[yi]) {
-            move([x,drill_ys[yi],top_z+stuff_h]) cyl(d=drill_d, h=drill_h[yi], anchor=TOP, $fn=40) {
+            move([x,drill_ys[yi],top_z+stuff_h]) cyl(d=drill_d, h=drill_h[yi], anchor=TOP) {
                 // Put countersink cone on the bottom
                 position(BOTTOM) cyl(d2=drill_d, d1=0, h=drill_d/2, anchor=TOP);
 
