@@ -1,3 +1,6 @@
 [submodule "BOSL2"]
 	path = BOSL2
 	url = https://github.com/BelfrySCAD/BOSL2.git
+[submodule "pathbuilder"]
+	path = pathbuilder
+	url = https://github.com/dinther/pathbuilder.git
