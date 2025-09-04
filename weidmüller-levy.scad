@@ -17,20 +17,25 @@ taps = 4;
 pf_w = 0.9;
 pf_h = 12;
 cham = 0.4;
+cut_safe = 0.3; // Keep couple of layers
 
-sizes = 6;
+bar_w = 10;
+$align_msg=false;
 
 module blokki(modules) {
     cuboid([pf_h, modules*mod_width, pf_w], anchor=BOTTOM) {
         fwd(edge/2) {
+            // Taps
             grid_copies([tap_sep, mod_width], [taps, modules]) {
                 position(TOP) cuboid([tap_w,mod_width-edge,tap_h], anchor=BOTTOM, edges=TOP, chamfer = cham);
+            }
+            // Cuts
+            cut_w = min(pf_w-cut_safe, edge/2);
+            ycopies(mod_width, modules-1) {
+                align(TOP, inside=true, shiftout=tap_h) cuboid([$parent_size[0]+0.1, 2*cut_w, cut_w+tap_h], edges=[BOTTOM+FWD, BOTTOM+BACK], chamfer=cut_w);
             }
         }
     }
 }
 
-// Place different sizes on the bed
-xcopies(pf_h+5, sizes) {
-    blokki($idx+1);
-}
+diff() blokki(bar_w);
