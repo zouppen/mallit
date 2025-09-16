@@ -10,17 +10,18 @@ include <BOSL2/std.scad>
 
 bar_d1 = 34.6;
 bar_d2 = 34.6;
-bar_l = 65;
+bar_l = 60;
 lamp_d = 30.3;
-lamp_l = 72;
-lamp_z = 68;
-lamp_angle = -24.6;
+lamp_l = 67.7;
+lamp_z = 71;
+lamp_angle = -30;
 wall = 2.7;
 button_groove_w = 6;
 button_groove_h = 1.2;
+button_groove_start = 9;
 ziptie_h = 2;
-ziptie_w = 4;
-ziptie_pos = [10, bar_l-10];
+ziptie_w = 5;
+ziptie_pos = [8, bar_l-8];
 
 // This causes segment angle normals to be no more than 1° apart as
 // long as the segment length is at least 0.2.
@@ -36,35 +37,37 @@ module lamp_hole(extra=0) {
 }
 
 module ziptie_ring() {
-    tag_diff("intersect") {
-        tag("remove") ycyl(d1=bar_d1+2*wall, d2=bar_d2+2*wall, h=bar_l, anchor=BACK);
-        ycyl(d1=bar_d1+2*wall+2*ziptie_h, d2=bar_d2+2*wall+2*ziptie_h, h=bar_l, anchor=BACK);
+    r1 = bar_d1/2+wall+ziptie_h;
+    r2 = bar_d2/2+wall+ziptie_h;
+    tag("intersect") {
+        rect_tube(size1=2*r1, size2=2*r2, h=bar_l, orient=BACK, anchor=TOP, wall=ziptie_h, rounding1=[0,r1,0,0], rounding2=[0,r2,0,0]);
     }
 }
 
-module ziptie_slice(pos) {
+module ziptie_slices() {
     tag_intersect("remove") {
         ziptie_ring();
-        fwd(pos) cuboid([200, ziptie_w, 200]);
+        for (pos = ziptie_pos) {
+            fwd(pos) cuboid([200, ziptie_w, 200]);
+        }
     }
 }
 
 module bicycle_bar(extra_len=0) {
-    back(extra_len/2) ycyl(d1=bar_d1, d2=bar_d2, h=bar_l+extra_len, anchor=BACK);
+    ycyl(d1=bar_d1, d2=bar_d2, h=bar_l, anchor=BACK, extra=extra_len);
 }
 
 diff() {
     hull() {
         front_half(s=500) lamp_hole(wall);
-        bicycle_bar();
+        bottom_half(s=500) bicycle_bar();
     }
     tag("remove") {
         bicycle_bar(10);
         lamp_hole() {
-            attach(BOTTOM) back(1) cuboid([button_groove_w,$parent_size[1]+2,2*button_groove_h], chamfer=0.5, edges=TOP);
+            attach(BOTTOM) back(1+button_groove_start) cuboid([button_groove_w,$parent_size[1]+2,2*button_groove_h], chamfer=0.5, edges=TOP);
         }
     }
-    for (pos = ziptie_pos) {
-        ziptie_slice(pos);
-    }
+
+    ziptie_slices();
 }
