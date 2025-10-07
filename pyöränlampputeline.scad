@@ -1,4 +1,4 @@
-// Weidmüller WDU 4 "sticker platforms"
+// Polkupyörän lamppu
 //
 // Useful for Dymo or other sticker printer to make smooth surface
 // where to attach the marker stickers.
