@@ -37,7 +37,7 @@ inset = chime_h - outset;
 screw_sep = chime_d + 2*screw_x;
 attach_fix = 90+77-slot_base_deg-slot_deg;
 
-module virvel(support=false) {
+module virvel() {
     // Top part
     tube(h=outset, id=chime_d, od2=chime_d, od1=chime_d+overhang, anchor=BOTTOM) {
         position(TOP) tag("remove") xcopies(screw_sep) {
@@ -67,20 +67,20 @@ module virvel(support=false) {
     }
 }
 
-diff("remove", "keep") hide("support") virvel();
+diff() virvel();
 
 %diff() {
     // Bottom part
-    tube(h=inset+wall, od=chime_d+overhang, wall=support_ring, anchor=TOP) {
+    up(1) tube(h=inset+wall+1, od=chime_d+overhang, wall=support_ring, anchor=TOP) {
         // Screw support
         xcopies(screw_sep) {
             cyl(h=$parent_size[2], d=chime_d+overhang-screw_sep);
         }
 
         // Support for the print inset
-        position(BOTTOM) tube(h=wall+slot_h, od=chime_d-2*wall_plus_tol-slot_support_shrink, wall=slot_w, anchor=BOTTOM);
+        position(BOTTOM) cyl(h=wall+slot_h, d=chime_d-2*wall_plus_tol-slot_support_shrink, anchor=BOTTOM);
 
-        // Support for bridge
+        // Support for bridges
         cuboid([support_ring, $parent_size[1], $parent_size[2]]);
     }
 }
