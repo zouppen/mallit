@@ -10,7 +10,7 @@ slot_extra = 1; // How much extra on y axis for the slots
 slot_extra_bottom = 1;
 
 // Lock rod
-lock_rod = [box[0]-2,4,2];
+lock_rod = [box[0],4,2];
 lock_rod_handle = 4;
 
 // Finger slot
