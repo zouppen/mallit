@@ -32,7 +32,7 @@ module slidebox() {
     rotate(-cutaxis) move(-cutpos) partition([500,500,500],spread=spread, gap=2, cutsize=cutsize, cutpath="jigsaw", $fn=24) skipper() move(cutpos) rotate(cutaxis) {
         diff() cuboid(box, chamfer=box_chamfer, anchor=BOTTOM) {
             if ($idx == 1) {
-                down(box_chamfer+2*tol) align(TOP, inside=true) children();
+                down(box_chamfer+2*tol) children();
             }
 
             // Lock rod opening
@@ -74,14 +74,14 @@ module slot(hole_size, hole_pos=[], extra) {
 
 module render_box() {
     slidebox() {
-        for (raw = slots) {
+        align(TOP, inside=true) for (raw = slots) {
             // Making a struct of it
             s = struct_set([], raw);
             slot(struct_val(s, "size"), struct_val(s, "pos", []), struct_val(s, "extra", true));
         }
 
         // Fingerslots
-        for (slot_pos = fingerslots) {
+        align(TOP, inside=true) for (slot_pos = fingerslots) {
             right(slot_pos) up(cutsize) cuboid([fingerslot_d, box[1]-2*fingerslot_wall_keepout, fingerslot_d+cutsize], chamfer=fingerslot_d/4, edges=[BOTTOM,"Z"]);
         }
     }
