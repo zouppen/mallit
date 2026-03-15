@@ -63,21 +63,31 @@ module slot(hole_size, hole_pos=[], extra) {
     size = hole_size + [0, 0, cutsize+1];
     move(pos) {
         if (extra) {
-            cuboid(size);
+            cuboid(size) {
+                children();
+            }
             cuboid(size + [-2*slot_guide, 2*slot_extra, 0], chamfer=slot_extra, edges=["Z",BOTTOM+FWD, BOTTOM+BACK]);
             cuboid(size + [-2*slot_guide, 0, slot_extra_bottom], chamfer=slot_extra_bottom, edges=BOTTOM);
         } else {
-            cuboid(size, chamfer=slot_extra_bottom, edges=["Z", BOTTOM]);
+            cuboid(size, chamfer=slot_extra_bottom, edges=["Z", BOTTOM]) {
+                children();
+            }
         }
     }
 }
 
 module render_box() {
     slidebox() {
+        // Opportunity to attach something to the case
+        $name = "chassis";
+        children();
         align(TOP, inside=true) for (raw = slots) {
             // Making a struct of it
             s = struct_set([], raw);
-            slot(struct_val(s, "size"), struct_val(s, "pos", []), struct_val(s, "extra", true));
+            $name = struct_val(s, "name");
+            slot(struct_val(s, "size"), struct_val(s, "pos", []), struct_val(s, "extra", true)) {
+                children();
+            }
         }
 
         // Fingerslots
