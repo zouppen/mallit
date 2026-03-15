@@ -57,7 +57,7 @@ module slidebox() {
     }
 }
 
-module slot(hole_size, hole_pos=[], extra=true) {
+module slot(hole_size, hole_pos=[], extra) {
     // Move things up by one so that cut has no z fighting
     pos = list_pad(hole_pos, 3, 0) + [0,0,1];
     size = hole_size + [0, 0, cutsize+1];
