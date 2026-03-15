@@ -29,7 +29,7 @@ module skipper() {
 }
 
 module slidebox() {
-    rotate(-cutaxis) move(-cutpos) partition([box[0],200,200],spread=spread, gap=2, cutsize=cutsize, cutpath="jigsaw", $fn=24) skipper() move(cutpos) rotate(cutaxis) {
+    rotate(-cutaxis) move(-cutpos) partition([500,500,500],spread=spread, gap=2, cutsize=cutsize, cutpath="jigsaw", $fn=24) skipper() move(cutpos) rotate(cutaxis) {
         diff() cuboid(box, chamfer=box_chamfer, anchor=BOTTOM) {
             if ($idx == 1) {
                 down(box_chamfer+2*tol) align(TOP, inside=true) children();
