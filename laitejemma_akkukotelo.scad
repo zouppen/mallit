@@ -54,7 +54,7 @@ render_box(tray_slot_y) {
                               bez_tang([(powerpole_h+tube_x_len)/2,tray_slot_y+fiber_route_y,fiber_route_z],[-10,0,6]),
                               bez_end([0,tray_slot_y,fiber_z_out], RIGHT, curve)]);
 
-        tag("remove") position(LEFT) bezpath_sweep(circle(d=2.6,$fn=24), fiber_path, 32);
+        tag("remove") position(LEFT) bezpath_sweep(circle(d=2.8,$fn=24), fiber_path, 32);
         //!debug_bezier(fiber_path);
     }
 };
