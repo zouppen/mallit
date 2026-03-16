@@ -29,7 +29,7 @@ module skipper() {
 }
 
 module slidebox(lock_rod_y) {
-    rotate(-cutaxis) move(-cutpos) partition([500,500,500],spread=spread, gap=2, cutsize=cutsize, cutpath="jigsaw", $fn=24) skipper() move(cutpos) rotate(cutaxis) {
+    rotate(-cutaxis) move(-cutpos) partition([500,500,500],spread=spread, gap=2, cutsize=cutsize, cutpath="jigsaw", $fn=24, $slop=0.2) skipper() move(cutpos) rotate(cutaxis) {
         diff() cuboid(box, chamfer=box_chamfer, anchor=BOTTOM) {
             if ($idx == 1) {
                 down(box_chamfer+2*tol) children();
@@ -48,7 +48,7 @@ module slidebox(lock_rod_y) {
                 cuboid([lock_rod_handle-1-tol, lock_rod[1]-tol, box_chamfer+lock_rod[2]-tol], chamfer=box_chamfer, edges=[TOP+LEFT]) {
                     position(BOTTOM+LEFT) {
                         // Long part
-                        cuboid(lock_rod-[tol,tol,2*tol], anchor=BOTTOM+LEFT);
+                        cuboid(lock_rod-[tol,tol,3*tol], anchor=BOTTOM+LEFT);
                     }
                 }
             }

@@ -54,7 +54,7 @@ render_box(tray_slot_y) {
                               bez_tang([(powerpole_h+tube_x_len)/2,tray_slot_y+fiber_route_y,fiber_route_z],[-10,0,5]),
                               bez_end([0,tray_slot_y,fiber_z_out], RIGHT, curve)]);
 
-        tag("remove") position(LEFT) bezpath_sweep(circle(d=2.4,$fn=24), fiber_path, 32);
+        tag("remove") position(LEFT) bezpath_sweep(circle(d=2.6,$fn=24), fiber_path, 32);
         //!debug_bezier(fiber_path);
     }
 };
@@ -62,7 +62,7 @@ render_box(tray_slot_y) {
 
 module powerpole_slot(extra=0) {
     module tooth() {
-        cuboid([4.2, $parent_size[2], 0.5], chamfer=0.5, edges=[TOP+RIGHT, TOP+LEFT]);
+        cuboid([4.6, $parent_size[2], 0.6], chamfer=0.5, edges=[TOP+RIGHT, TOP+LEFT]);
     }
     cuboid([16.2, 8.2, powerpole_h+extra], anchor=TOP) {
         attach(LEFT) tooth();
