@@ -62,11 +62,15 @@ render_box(tray_slot_y) {
 
 module powerpole_slot(extra=0) {
     module tooth() {
-        cuboid([4.6, $parent_size[2], 0.6], chamfer=0.5, edges=[TOP+RIGHT, TOP+LEFT]);
+        cuboid([5, $parent_size[2], 0.8], chamfer=0.5, edges=[TOP+RIGHT, TOP+LEFT]);
     }
-    cuboid([16.2, 8.2, powerpole_h+extra], anchor=TOP) {
+    cuboid([16.4, 8.2, powerpole_h+extra], anchor=TOP) {
         attach(LEFT) tooth();
         attach(FWD) xcopies(8.2) tooth();
+        // Drill hole
+        up(15) back(2.2) position(BOTTOM+BACK) ycyl(l=31, d=3, anchor=BACK, $fn=24);
         children();
     }
 }
+
+//!powerpole_slot();
