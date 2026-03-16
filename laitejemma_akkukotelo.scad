@@ -16,7 +16,7 @@ fingerslots = [0];
 
 // Heretic way to communicate with global vars
 include <laitejemma.scad>
-render_box() {
+render_box(tray_slot_y) {
     cable_y = (-tray_h-tray_pos)/2;
     tube_x_len = 15.2;
 

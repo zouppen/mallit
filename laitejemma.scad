@@ -28,7 +28,7 @@ module skipper() {
     if ($idx == 1 || !$no_top) children();
 }
 
-module slidebox() {
+module slidebox(lock_rod_y) {
     rotate(-cutaxis) move(-cutpos) partition([500,500,500],spread=spread, gap=2, cutsize=cutsize, cutpath="jigsaw", $fn=24) skipper() move(cutpos) rotate(cutaxis) {
         diff() cuboid(box, chamfer=box_chamfer, anchor=BOTTOM) {
             if ($idx == 1) {
@@ -36,7 +36,7 @@ module slidebox() {
             }
 
             // Lock rod opening
-            align(TOP+LEFT, inside=true) {
+            back(lock_rod_y) align(TOP+LEFT, inside=true) {
                 // Rod hole
                 down(box_chamfer) cuboid(lock_rod);
                 // Rod insert
@@ -76,8 +76,8 @@ module slot(hole_size, hole_pos=[], extra) {
     }
 }
 
-module render_box() {
-    slidebox() {
+module render_box(lock_rod_y = 0) {
+    slidebox(lock_rod_y) {
         // Opportunity to attach something to the case
         $name = "chassis";
         children();
