@@ -30,7 +30,7 @@ render_box(tray_slot_y) {
                            bez_end([0,0,0], DOWN, curve)]);
 
         left(80) position(TOP) powerpole_slot(cutsize+1) {
-            position(BOTTOM) bezpath_sweep(circle(d=$parent_size[1], spin=360/12,$fn=6), bezpath);
+            position(BOTTOM) bezpath_sweep(yscale(1.5,circle(d=$parent_size[1], spin=360/12,$fn=6)), bezpath);
         };
     }
     if ($name == "chassis") {
@@ -41,7 +41,7 @@ render_box(tray_slot_y) {
                            bez_end([0,0,0], DOWN, curve)]);
 
         tag("remove") move([-0.05,tray_slot_y,0]) position(LEFT) yrot(-90) powerpole_slot() {
-            position(BOTTOM) bezpath_sweep(circle(d=$parent_size[1],$fn=6), bezpath);
+            position(BOTTOM) bezpath_sweep(xscale(1.5, circle(d=$parent_size[1],$fn=6)), bezpath);
         }
 
         // Fiber (light bridge)
@@ -51,7 +51,7 @@ render_box(tray_slot_y) {
         fiber_route_y = -9;
         fiber_route_z = (0.4*fiber_z_in+0.6*fiber_z_out);
         fiber_path = flatten([bez_begin([powerpole_h+tube_x_len,tray_slot_y+cable_y,fiber_z_in], LEFT, fiber_curve),
-                              bez_tang([(powerpole_h+tube_x_len)/2,tray_slot_y+fiber_route_y,fiber_route_z],[-10,0,5]),
+                              bez_tang([(powerpole_h+tube_x_len)/2,tray_slot_y+fiber_route_y,fiber_route_z],[-10,0,6]),
                               bez_end([0,tray_slot_y,fiber_z_out], RIGHT, curve)]);
 
         tag("remove") position(LEFT) bezpath_sweep(circle(d=2.6,$fn=24), fiber_path, 32);
