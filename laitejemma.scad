@@ -48,7 +48,7 @@ module slidebox(lock_rod_y) {
                 cuboid([lock_rod_handle-1-tol, lock_rod[1]-tol, box_chamfer+lock_rod[2]-tol], chamfer=box_chamfer, edges=[TOP+LEFT]) {
                     position(BOTTOM+LEFT) {
                         // Long part
-                        cuboid(lock_rod-[tol,tol,3*tol], anchor=BOTTOM+LEFT);
+                        cuboid(lock_rod-[tol,tol,4*tol], anchor=BOTTOM+LEFT);
                     }
                 }
             }
