@@ -29,7 +29,7 @@ render_box(tray_slot_y) {
         bezpath = flatten([bez_begin([20,cable_y,-15], LEFT, curve),
                            bez_end([0,0,0], DOWN, curve)]);
 
-        left(80) position(TOP) powerpole_slot(cutsize+1) {
+        left(80) down(cutsize+1) position(TOP) powerpole_slot() {
             position(BOTTOM) bezpath_sweep(yscale(1.5,circle(d=$parent_size[1], spin=360/12,$fn=6)), bezpath);
         };
     }
@@ -60,11 +60,14 @@ render_box(tray_slot_y) {
 };
 
 
-module powerpole_slot(extra=0) {
+module powerpole_slot(extra) {
+    // Make sure the cable fits
+    clearance = [20.2, 12, 50];
     module tooth() {
         cuboid([5, $parent_size[2], 0.8], chamfer=0.5, edges=[TOP+RIGHT, TOP+LEFT]);
     }
-    cuboid([16.4, 8.2, powerpole_h+extra], anchor=TOP) {
+    cuboid([16.4, 8.2, powerpole_h], anchor=TOP) {
+        down(0.01) align(TOP) cuboid(clearance);
         attach(LEFT) tooth();
         attach(FWD) xcopies(8.2) tooth();
         // Drill hole
