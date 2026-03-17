@@ -11,7 +11,7 @@ powerpole_h = 25;
 slots = [ ["size", [152, 66, 103], "pos", [  0, -11]], // Battery
           ["size", [120, tray_slot_h, 100 ], "pos", [  15,  tray_slot_y], "extra", false, "name", "luukku"]]; // Electronics
 
-fingerslots = [0];
+fingerslots = [15];
 
 
 // Heretic way to communicate with global vars
