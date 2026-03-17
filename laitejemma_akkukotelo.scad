@@ -45,13 +45,13 @@ render_box(tray_slot_y) {
         }
 
         // Fiber (light bridge)
-        fiber_curve=5;
+        fiber_curve=10;
         fiber_z_in = -11;
         fiber_z_out = 15;
-        fiber_route_y = -9;
-        fiber_route_z = (0.4*fiber_z_in+0.6*fiber_z_out);
+        fiber_route_y = -8;
+        fiber_route_z = (0.45*fiber_z_in+0.55*fiber_z_out);
         fiber_path = flatten([bez_begin([powerpole_h+tube_x_len,tray_slot_y+cable_y,fiber_z_in], LEFT, fiber_curve),
-                              bez_tang([(powerpole_h+tube_x_len)/2,tray_slot_y+fiber_route_y,fiber_route_z],[-10,0,6]),
+                              bez_tang([(0.4*powerpole_h+0.6*tube_x_len),tray_slot_y+fiber_route_y,fiber_route_z],[-10,0,7]),
                               bez_end([0,tray_slot_y,fiber_z_out], RIGHT, curve)]);
 
         tag("remove") position(LEFT) bezpath_sweep(circle(d=2.8,$fn=24), fiber_path, 32);
