@@ -3,28 +3,33 @@
 include <laitejemma.scad>
 
 box = [170,100,115];
-tray_slot_h = 20;
+tray_slot = [120, 20, 100];
 tray_pos = 3;
 tray_rail = 2.9;
 tray_h = 2;
 tray_slot_y = 35;
+tray_top_part = 2;
 powerpole_h = 25;
 
 slots = [ ["size", [152, 66, 103], "pos", [  0, -11]], // Battery
-          ["size", [120, tray_slot_h, 100 ], "pos", [  15,  tray_slot_y], "extra", false, "name", "luukku"]]; // Electronics
+          ["size", tray_slot, "pos", [  15,  tray_slot_y], "extra", false, "name", "luukku"]]; // Electronics
+
+slots_insert = [["size", tray_slot-[4*tol, 4*tol, 2*tol], "pos", [  15,  tray_slot_y], "extra", false]];
 
 fingerslots = [15];
+
+//$box_hide = "lid rod";
 
 render_box(box, slots, fingerslots, tray_slot_y) {
     cable_y = (-tray_h-tray_pos)/2;
     tube_x_len = 15.2;
 
     if ($name == "luukku") {
-        // Charging slot
+        // Tray rail
         fwd(tray_pos) position(BACK) cuboid([$parent_size[0]+2*tray_rail, tray_h, $parent_size[2]], anchor=BACK);
 
+        // Charging powerpole slot
         curve=10;
-
         bezpath = flatten([bez_begin([20,cable_y,-15], LEFT, curve),
                            bez_end([0,0,0], DOWN, curve)]);
 
@@ -75,4 +80,15 @@ module powerpole_slot(extra) {
     }
 }
 
-//!powerpole_slot();
+// The PCB tray
+back(40) render_box(box, slots_insert, [], tray_slot_y, $box_hide="lid rod case", $box_remove = "remove") {
+        if ($name == "slot") {
+            // Tray
+            fwd(tray_pos) position(BACK) cuboid([$parent_size[0]+2*tray_rail-2*tol, tray_h-4*tol, $parent_size[2]], anchor=BACK) {
+                // Carve PCB area
+                tag("remove") position(FWD+BOTTOM) down(0.01) cuboid(tray_slot-[0,0,tray_top_part], anchor=BACK+BOTTOM);
+            }
+            // Fingerslot fill
+            tag("keep") position(FWD+TOP) cuboid([fingerslot_d-4*tol,2.1,$parent_size[2]-tray_slot[2]+tray_top_part], anchor=BACK+TOP);
+        }
+}
