@@ -1,5 +1,7 @@
 // A box containing 2 SATA drives, 2x M.2 drive and room for cables
 
+include <laitejemma.scad>
+
 box = [110,50,90];
 
 slots = [ ["size", [100 ,  7  , 69.9], "pos", [  0, -15]], // SATA drive 1
@@ -10,6 +12,4 @@ slots = [ ["size", [100 ,  7  , 69.9], "pos", [  0, -15]], // SATA drive 1
 
 fingerslots = [30, -15];
 
-// Somewhat heretic way to communicate with global vars
-include <laitejemma.scad>
-render_box();
+render_box(box, slots, fingerslots);

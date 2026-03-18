@@ -5,13 +5,8 @@ $no_top=false;
 
 box_chamfer=2;
 cutsize = 4; // How tall is the cut
-cut_z = box[2]-cutsize-box_chamfer; // where the cut is
 slot_extra = 1; // How much extra on y axis for the slots
 slot_extra_bottom = 1;
-
-// Lock rod
-lock_rod = [box[0],4,2];
-lock_rod_handle = 4;
 
 // Finger slot
 fingerslot_wall_keepout = 5;
@@ -21,14 +16,21 @@ slot_guide = 7; // How long support for the devices on the bottom (on x axis)
 // Cut configuration
 cutaxis = [-90,0,0];
 tol = 0.1;
-cutpos = [0,-cut_z+tol-cutsize/2,0];
 spread = 50; // separate or not
 
 module skipper() {
     if ($idx == 1 || !$no_top) children();
 }
 
-module slidebox(lock_rod_y) {
+module slidebox(box, lock_rod_y) {
+    // Lock rod
+    lock_rod = [box[0],4,2];
+    lock_rod_handle = 4;
+
+    // Where the cut is
+    cut_z = box[2]-cutsize-box_chamfer;
+    cutpos = [0,-cut_z+tol-cutsize/2,0];
+
     rotate(-cutaxis) move(-cutpos) partition([500,500,500],spread=spread, gap=2, cutsize=cutsize, cutpath="jigsaw", $fn=24, $slop=0.1) skipper() move(cutpos) rotate(cutaxis) {
         diff() cuboid(box, chamfer=box_chamfer, anchor=BOTTOM) {
             if ($idx == 1) {
@@ -76,8 +78,8 @@ module slot(hole_size, hole_pos=[], extra) {
     }
 }
 
-module render_box(lock_rod_y = 0) {
-    slidebox(lock_rod_y) {
+module render_box(box, slots, fingerslots, lock_rod_y = 0) {
+    slidebox(box, lock_rod_y) {
         // Opportunity to attach something to the case
         $name = "chassis";
         children();
