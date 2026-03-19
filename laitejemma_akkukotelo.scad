@@ -10,6 +10,37 @@ tray_h = 2;
 tray_slot_y = 35;
 tray_top_part = 2;
 powerpole_h = 25;
+psu_holes = [39,70];
+psu_hole_d = 3.4;
+psu_nut_d = 6.5;
+psu_nut_h = 2.8;
+psu_bot_extra = 5;
+psu_bot_inset = 6;
+psu_bot_roundness = 2;
+psu_bot_depth=1.2;
+psu_x = 35;
+shelly_zip_sep_x = 24;
+shelly_zip_sep_z = 25;
+shelly_x = -5;
+ziptie = [4, 1.5];
+fuse_tooth = [23.6, 5.2, 2.8];
+fuse_back_dist = 17;
+fuse_back = [4.2, 2.1, 2];
+fuse_hole = 3;
+fuse_pos = [34.2,13-tray_slot[0]/2+fuse_tooth[1]/2];
+
+// PSU screw: M3x6
+
+module fuse() {
+    hide_this() cuboid(fuse_tooth) {
+        for (side = [LEFT, RIGHT]) {
+            position(side+TOP) cuboid([fuse_hole,$parent_size[1],$parent_size[2]], anchor=TOP-side) {
+                position (side+BOTTOM) cuboid([2*fuse_hole,$parent_size[1],fuse_hole], anchor=TOP+side);
+            }
+        }
+        back(fuse_back_dist) position(TOP+BACK) cuboid(fuse_back, anchor=TOP+FRONT);
+    };
+}
 
 slots = [ ["size", [152, 66, 103], "pos", [  0, -11]], // Battery
           ["size", tray_slot, "pos", [  15,  tray_slot_y], "extra", false, "name", "luukku"]]; // Electronics
@@ -86,9 +117,39 @@ back(40) render_box(box, slots_insert, [], tray_slot_y, $box_hide="lid rod case"
             // Tray
             fwd(tray_pos) position(BACK) cuboid([$parent_size[0]+2*tray_rail-2*tol, tray_h-4*tol, $parent_size[2]], anchor=BACK) {
                 // Carve PCB area
-                tag("remove") position(FWD+BOTTOM) down(0.01) cuboid(tray_slot-[0,0,tray_top_part], anchor=BACK+BOTTOM);
+                tag("remove") position(FWD+BOTTOM) down(0.01) cuboid(tray_slot-[0,0,tray_top_part], anchor=BACK+BOTTOM) {
+                    // PSU
+                    right(psu_x) {
+                        fwd(0.01) position(BACK) grid_copies(psu_holes, axes="xz") {
+                            ycyl(d=psu_hole_d, anchor=FWD, h=tray_h+tray_pos-psu_nut_h) {
+                                position(BACK) fwd(0.01) ycyl(d=psu_nut_d, h=psu_nut_h, anchor=FWD, $fn=6);
+                            }
+                        }
+                        position(BACK) xrot(90) psu_inset();
+                    }
+                    // Shelly
+                    right(shelly_x) zcopies(shelly_zip_sep_z) yrot(90) attach(BACK, TOP) ziptie(shelly_zip_sep_x, 4);
+
+                    // Fuse
+                    yrot(90) attach(BACK, TOP) down(0.01) move(fuse_pos) fuse();
+                }
             }
             // Fingerslot fill
             tag("keep") position(FWD+TOP) cuboid([fingerslot_d-4*tol,2.1,$parent_size[2]-tray_slot[2]+tray_top_part], anchor=BACK+TOP);
+
         }
 }
+
+module psu_inset() {
+    tag_scope() diff() cuboid([psu_holes[0]+psu_bot_extra, psu_holes[1]+psu_bot_extra, psu_bot_depth], anchor=TOP) {
+        for (corner = [LEFT+FWD, RIGHT+FWD, LEFT+BACK, RIGHT+BACK]) {
+            tag("remove") move(corner*0.01) position(corner) cuboid(psu_bot_inset , rounding=psu_bot_roundness, edges=-corner, anchor=corner);
+        }
+    }
+}
+
+module ziptie(sep, curve) {
+    bezpath = flatten([bez_begin([0,sep,0], DOWN, curve),
+                       bez_end([0,0,0], DOWN, curve)]);
+    bezpath_sweep(rect(ziptie), bezpath, 30, anchor=TOP);
+};
