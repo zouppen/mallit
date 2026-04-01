@@ -1,6 +1,7 @@
 // A box containing 2 SATA drives, 2x M.2 drive and room for cables
 
 include <laitejemma.scad>
+include <powerpole_lib.scad>
 
 box = [170,100,115];
 tray_slot = [120, 20, 100];
@@ -9,7 +10,6 @@ tray_rail = 2.9;
 tray_h = 2;
 tray_slot_y = 35;
 tray_top_part = 2;
-powerpole_h = 25;
 psu_holes = [39,68.6];
 psu_hole_d = 3.4;
 psu_nut_d = 6.5;
@@ -93,23 +93,6 @@ render_box(box, slots, fingerslots, tray_slot_y) {
         //!debug_bezier(fiber_path);
     }
 };
-
-
-module powerpole_slot(extra) {
-    // Make sure the cable fits
-    clearance = [20.2, 12, 50];
-    module tooth() {
-        cuboid([5, $parent_size[2], 0.8], chamfer=0.5, edges=[TOP+RIGHT, TOP+LEFT]);
-    }
-    cuboid([16.4, 8.2, powerpole_h], anchor=TOP) {
-        down(0.01) align(TOP) cuboid(clearance);
-        attach(LEFT) tooth();
-        attach(FWD) xcopies(8.2) tooth();
-        // Drill hole
-        up(15) back(2.2) position(BOTTOM+BACK) ycyl(l=31, d=3, anchor=BACK, $fn=24);
-        children();
-    }
-}
 
 // The PCB tray
 back(40) render_box(box, slots_insert, [], tray_slot_y, $box_hide="lid rod case", $box_remove = "remove") {
