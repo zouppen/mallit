@@ -20,6 +20,12 @@ shelly_hole_d = 2; // Shelly helper hole diameter for the screw
 screw_extra=5; // Screw base height
 screw_top=8.3; // Make the screw base and the driver to fit
 
+shelly_hand_bottom_screw_pos = 3; // Perfect fit depends on ang variable
+shelly_hand_w = 3; // Shelly hand thickness
+shelly_top = 25; // Shelly hand top extra
+headroom_fixed = 35 + 43; // Shelly + fan
+headroom_extra = 70; // Shelly hand visible part
+
 // VNF for base parts, useful for making the projection cut to ease 3D
 // printing.
 frame_base = prismoid(size2=[fan_d, fan_d], size1=[base_bot_d, base_bot_d], h=base_h, anchor=TOP, rounding=base_z_round, $fn=32);
@@ -40,9 +46,15 @@ diff() {
     vnf_polyhedron(frame_base) {
         // Shelly raiser
         shelly_plate_inset = 33;
-        position(TOP+BACK) cuboid([shelly_back_w, shelly_outset, shelly_plate_inset], anchor=TOP+FWD) {
-            tag("remove") xcopies(shelly_hole_sep) position(BACK) ycyl(d=screw_d, h=3, anchor=BACK, extra2=1, $fn=32) {
+        position(TOP+BACK) cuboid([shelly_back_w, shelly_outset, shelly_plate_inset], anchor=TOP+FWD, rounding=shelly_round, edges=[BOTTOM+LEFT, BOTTOM+RIGHT]) {
+            tag("remove") xcopies(shelly_hole_sep) position(BACK) ycyl(d=screw_d, h=shelly_hand_bottom_screw_pos, anchor=BACK, extra2=30, $fn=32) {
                 position(FWD) ycyl(d1=screw_top, d2=screw_d, h=(screw_top-screw_d)/2, extra1=10, anchor=FWD);
+            }
+
+            // Hand
+            back(10) position(BACK+BOTTOM) cuboid([$parent_size[0], shelly_hand_w, $parent_size[2]+headroom_fixed+headroom_extra], anchor=FWD+BOTTOM, edges="Y", rounding=shelly_round, $fn=32) {
+                // And the screw holes
+                tag("remove") down(shelly_top) position(TOP) xcopies(shelly_hole_sep) ycyl(d=shelly_hole_d, h=$parent_size[1]+1);
             }
         }
 
