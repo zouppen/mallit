@@ -42,6 +42,7 @@ shelly_top = 25; // Shelly hand top extra (measured from the screws)
 
 psu = [41, 15, 115]; // PSU compartment size
 psu_ceil = 2; // PSU "ceiling" height
+psu_wedge = 8; // Wedge in the front. NB! avoid to block the nut!
 fan_wire_d = 4; // Size of extra openings near PP connector
 small_wall = 1; // Thickness of the screw platform
 tol = 0.4; // Clearance of the PSU box.
@@ -78,6 +79,10 @@ diff() {
                 // PSU slot
                 up(hand_z) position(BACK+BOTTOM) cuboid([$parent_size[0], psu[1]+psu_ceil, $parent_size[2]-hand_z], anchor=FRONT+BOTTOM, rounding=hand_round, edges=[TOP+LEFT, TOP+RIGHT]) {
                     tag("remove") down(0.01) position(FRONT+BOTTOM) cuboid(psu, anchor=FRONT+BOTTOM);
+                    // Add some chamfer
+                    tag("keep") for (side=[LEFT,RIGHT]) {
+                        position(BOTTOM+FRONT+side) zflip() wedge([($parent_size[0]-psu[0])/2, $parent_size[1], psu_wedge], anchor=side+BOTTOM+FRONT);
+                    }
                 };
 
                 // Powerpole connector
