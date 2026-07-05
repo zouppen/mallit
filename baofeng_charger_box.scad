@@ -23,32 +23,47 @@ screw_in = 5;
 screw_pos = [outside[0]-2*screw_in, outside[1]-2*screw_in];
 screw_cone_h = 5;
 screw_cone_d = 6.75;
+tol = 0.4;
 
-diff() {
-    cuboid(outside) {
+module charger_box() {
+    tag("base") cuboid(outside) {
         // Cover opening
         attach(TOP, TOP, inside=true, shiftout=eps) {
-            cuboid(cover);
+            tag("remove_base") cuboid(cover);
         }
 
         // PP
-        tag("remove") yrot(180) attach(BACK) powerpole_slot();
+        tag("remove_base") yrot(180) attach(BACK) powerpole_slot();
 
         ymove(outside[1]/2-pcb_box[1]/2-y_pp) {
-            align(BOTTOM, inside=true, shiftout=-wall) {
+            align(BOTTOM, inside=true, shiftout=-wall) tag("remove_base") {
                 cuboid(pcb_box+[0,0,eps]);
                 cuboid(wire_room);
             }
         }
 
-        attach(FRONT, TOP, inside=true, shiftout=eps) zcyl(d=wire_d, h=y_cable);
+        attach(FRONT, TOP, inside=true, shiftout=eps) tag("remove_base") zcyl(d=wire_d, h=y_cable);
 
-        attach(TOP, TOP, inside=true) grid_copies(screw_pos) {
+        attach(TOP, TOP, inside=true) tag("remove") grid_copies(screw_pos) {
             zcyl(h=screw_h, d=screw_d) {
                 position(TOP) {
                     zcyl(h=screw_cone_h, d1=screw_d, d2=screw_cone_d, anchor=TOP);
                 }
             }
         }
+
+        // Top cover
+        position(TOP) tag("cover") {
+            cuboid([outside[0]-2*wall-tol, outside[1]-2*wall-tol, wall-tol/2], anchor=TOP);
+        }
     }
+}
+
+
+diff("remove remove_base", "keep") hide("cover") {
+    charger_box();
+}
+
+up(10) diff("remove remove_top", "keep") hide("base remove_base") {
+    charger_box();
 }
