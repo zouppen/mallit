@@ -24,11 +24,12 @@ screw_in = 5;
 screw_pos = [outside[0]-2*screw_in, outside[1]-2*screw_in];
 screw_cone_h = 5;
 screw_cone_d = 6.75;
+cover_h = 0.8;
 tol = 0.4;
 
 wire_round = min(wire_hole)/2;
 
-module charger_box() {
+module charger_box($tune_screw=0) {
     tag("base") cuboid(outside) {
         // Cover opening
         attach(TOP, TOP, inside=true, shiftout=eps) {
@@ -47,7 +48,7 @@ module charger_box() {
 
         attach(FRONT, TOP, inside=true, shiftout=eps) tag("remove_base") cuboid([wire_hole[0], wire_hole[1], y_cable], rounding=wire_round, edges="Z");
 
-        attach(TOP, TOP, inside=true) tag("remove") grid_copies(screw_pos) {
+        up($tune_screw) attach(TOP, TOP, inside=true) tag("remove") grid_copies(screw_pos) {
             zcyl(h=screw_h, d=screw_d) {
                 position(TOP) {
                     zcyl(h=screw_cone_h, d1=screw_d, d2=screw_cone_d, anchor=TOP);
@@ -57,7 +58,9 @@ module charger_box() {
 
         // Top cover
         position(TOP) tag("cover") {
-            cuboid([outside[0]-2*wall-tol, outside[1]-2*wall-tol, wall-tol/2], anchor=TOP);
+            cuboid([outside[0]-2*wall-tol, outside[1]-2*wall-tol, wall-tol/2], anchor=TOP) {
+                position(TOP) cuboid([outside[0], outside[1], cover_h], anchor=BOTTOM);
+            }
         }
     }
 }
@@ -68,5 +71,5 @@ diff("remove remove_base", "keep") hide("cover") {
 }
 
 up(10) diff("remove remove_top", "keep") hide("base remove_base") {
-    charger_box();
+    charger_box($tune_screw=cover_h+eps);
 }
