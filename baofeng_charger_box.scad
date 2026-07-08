@@ -7,10 +7,10 @@ $fa=1;
 $fs=0.2;
 $align_msg = false;
 
-pcb_box = [26.5, 51.0, 15.7];
+pcb_box = [26.5, 51.4, 15.7];
 guide = 22.5;
 y_pp = 30;
-y_cable = 15;
+y_cable = 14.6;
 wall = 2;
 outside = pcb_box + [2*wall, y_pp+y_cable, 2*wall];
 eps = 0.05;
