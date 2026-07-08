@@ -17,7 +17,7 @@ eps = 0.05;
 cover = [outside[0]-2*wall, outside[1]-2*wall, wall+eps];
 wire_room = [2*guide-pcb_box[0], pcb_box[1]+10+eps, pcb_box[2]+eps];
 wire_hole = [3.7, 3.7];
-wire_round = 3.7/2;
+// wire_hole = [4, 2.2]; // Ilkka's
 screw_d = 2.2;
 screw_h = 15.5;
 screw_in = 5;
@@ -25,6 +25,8 @@ screw_pos = [outside[0]-2*screw_in, outside[1]-2*screw_in];
 screw_cone_h = 5;
 screw_cone_d = 6.75;
 tol = 0.4;
+
+wire_round = min(wire_hole)/2;
 
 module charger_box() {
     tag("base") cuboid(outside) {
