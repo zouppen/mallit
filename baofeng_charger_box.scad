@@ -16,7 +16,8 @@ outside = pcb_box + [2*wall, y_pp+y_cable, 2*wall];
 eps = 0.05;
 cover = [outside[0]-2*wall, outside[1]-2*wall, wall+eps];
 wire_room = [2*guide-pcb_box[0], pcb_box[1]+10+eps, pcb_box[2]+eps];
-wire_d = 3.7;
+wire_hole = [3.7, 3.7];
+wire_round = 3.7/2;
 screw_d = 2.2;
 screw_h = 15.5;
 screw_in = 5;
@@ -42,7 +43,7 @@ module charger_box() {
             }
         }
 
-        attach(FRONT, TOP, inside=true, shiftout=eps) tag("remove_base") zcyl(d=wire_d, h=y_cable);
+        attach(FRONT, TOP, inside=true, shiftout=eps) tag("remove_base") cuboid([wire_hole[0], wire_hole[1], y_cable], rounding=wire_round, edges="Z");
 
         attach(TOP, TOP, inside=true) tag("remove") grid_copies(screw_pos) {
             zcyl(h=screw_h, d=screw_d) {
