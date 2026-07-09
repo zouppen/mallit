@@ -1,6 +1,6 @@
 powerpole_h = 25;
 
-module powerpole_slot(extra) {
+module powerpole_slot(extra, $tap_side=0) {
     // Make sure the cable fits
     clearance = [20.2, 12, 50];
     module tooth() {
@@ -11,7 +11,7 @@ module powerpole_slot(extra) {
         attach(LEFT) tooth();
         attach(FWD) xcopies(8.2) tooth();
         // Drill hole
-        up(15) back(2.2) position(BOTTOM+BACK) ycyl(l=31, d=3, anchor=BACK, $fn=24);
+        zrot($tap_side ? 180 : 0) up(15) back(2.2) position(BOTTOM+BACK) ycyl(l=31, d=3, anchor=BACK, $fn=24);
         children();
     }
 }
