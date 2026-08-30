@@ -99,6 +99,12 @@ module fire_pit() {
     }
 }
 
+module lock() {
+    fwd(7) cuboid([hole[0],16, hole[1]], chamfer=hole[1]/2, edges=BACK+TOP) {
+        position(FWD+BOTTOM) cuboid([hole[0], hole[0], 2*hole[1]], anchor=BOTTOM+BACK,chamfer=hole[1]/2, edges=BACK+TOP);
+    }
+}
+
 // Hands
 diff() {
     xflip_copy(offset=hands_sep/2) hand();
@@ -106,3 +112,5 @@ diff() {
     catcher();
     fire_pit();
 }
+
+xcopies(10, n=2) lock();
