@@ -1,0 +1,10 @@
+#!/bin/sh -eu
+
+render() {
+    openscad -D "color=$1" -o "rendatut/moppepay-$1.stl" "moppepay.scad"
+}
+
+# Different filaments for top
+render 0
+render 1
+render 2
