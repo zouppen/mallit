@@ -24,7 +24,7 @@ hexas = 9;
 
 foot_hole = 4.2;
 foot = 9;
-foot_chamfer=3;
+foot_rounding=4;
 
 pcb_real = pcb + [2*tol, 2*tol, 2*tol];
 inner_room = [pcb[0], pcb[1] - 2*tray_w, pcb[2] + room_top + room_bottom];
@@ -50,11 +50,10 @@ diff() {
         for (x = [LEFT, RIGHT]) {
             for (y = [FRONT, BACK]) {
                 position(x+y+BOTTOM) {
-                    cuboid([foot+wall, foot, wall], anchor=x-y+BOTTOM, edges=[x+y, y-x], rounding=foot_chamfer) {
+                    cuboid([foot+wall, foot, wall], anchor=x-y+BOTTOM, edges=[y-x], rounding=foot_rounding) {
                         tag("remove") move(-0.5*wall*x) zcyl(h=wall+tol, d=foot_hole);
                     }
-                    edge = foot - foot_chamfer;
-                    up(wall) cuboid([wall, edge, edge], anchor=x-y+BOTTOM, edges=TOP+y, chamfer=edge);
+                    up(wall) zscale((cover[2]-2*wall)/foot) cuboid([wall, foot, foot], edges=TOP+y, chamfer=foot, anchor=x-y+BOTTOM);
                 }
             }
         }
