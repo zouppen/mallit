@@ -30,7 +30,6 @@ pcb_real = pcb + [2*tol, 2*tol, 2*tol];
 inner_room = [pcb[0], pcb[1] - 2*tray_w, pcb[2] + room_top + room_bottom];
 cover = [inner_room[0]+sma_panel_w, pcb[1]+2*wall, inner_room[2]+2*wall];
 
-//%cuboid(pcb);
 diff() {
     cuboid(cover, edges=[TOP+FWD, TOP+BACK], chamfer=wall) {
         tag("remove") {
